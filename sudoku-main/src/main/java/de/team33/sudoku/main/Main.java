@@ -1,8 +1,17 @@
 package de.team33.sudoku.main;
 
-public class Main {
+import net.team33.sudoku.Sudoku;
+import net.team33.sudoku.ui.MainFrame;
 
-    public static void main(final String... args) {
-        throw new UnsupportedOperationException("not yet implemented");
+import javax.swing.*;
+
+public class Main implements Runnable {
+
+    public static void main(String[] args) {
+        SwingUtilities.invokeLater(new Main());
+    }
+
+    public void run() {
+        (new MainFrame(new Sudoku())).setVisible(true);
     }
 }
