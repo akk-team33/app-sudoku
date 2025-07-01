@@ -1,4 +1,4 @@
-# cmd-mm-template
+# app-sudoku
 
     A template command-line multi-module project
     

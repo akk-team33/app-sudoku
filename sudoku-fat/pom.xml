@@ -4,22 +4,21 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
-        <groupId>de.team33.cmd.template</groupId>
-        <artifactId>template-root</artifactId>
-        <version>1.0.4-SNAPSHOT</version>
+        <groupId>de.team33.sudoku</groupId>
+        <artifactId>sudoku-root</artifactId>
+        <version>1.0.0-SNAPSHOT</version>
     </parent>
 
-    <artifactId>template-fat</artifactId>
+    <artifactId>sudoku-fat</artifactId>
     <packaging>pom</packaging>
 
-    <name>CMD Template Fat Jar</name>
-    <description>[Project template]
-        A command line tool to perform various tasks on the file system - fat jar module.</description>
+    <name>Sudoku Fat Jar</name>
+    <description>Solve Sudoku puzzles systematically - fat jar module.</description>
 
     <dependencies>
         <dependency>
-            <groupId>de.team33.cmd.template</groupId>
-            <artifactId>template-main</artifactId>
+            <groupId>de.team33.sudoku</groupId>
+            <artifactId>sudoku-main</artifactId>
             <version>${project.version}</version>
         </dependency>
     </dependencies>
@@ -42,7 +41,7 @@
                             <archive>
                                 <manifest>
                                     <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
-                                    <mainClass>de.team33.cmd.template.Main</mainClass>
+                                    <mainClass>de.team33.sudoku.main.Main</mainClass>
                                 </manifest>
                             </archive>
                             <descriptors>
