@@ -6,14 +6,12 @@ import de.team33.sudoku.ui.MainFrame;
 import javax.swing.*;
 
 public class Main implements Runnable {
-    public Main() {
-    }
 
-    public static void main(String[] args) {
+    public static void main(final String[] args) {
         SwingUtilities.invokeLater(new Main());
     }
 
-    public void run() {
+    public final void run() {
         (new MainFrame(new Sudoku())).setVisible(true);
     }
 }

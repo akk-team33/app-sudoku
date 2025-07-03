@@ -10,36 +10,36 @@ import java.awt.*;
 
 public class PotentialGrid extends JPanel {
     private static final long serialVersionUID = -3142888299633458277L;
-    private PotentialCell[] m_Cells;
+    private final PotentialCell[] m_Cells;
 
-    public PotentialGrid(Potential p, Relay<HiliteMessage> rel, Setup s) {
+    public PotentialGrid(final Potential p, final Relay<HiliteMessage> rel, final Setup s) {
         super(new GridLayout(Numbers.getRadix(), Numbers.getRadix(), 1, 1));
-        this.setBorder(BorderFactory.createEmptyBorder(1, 1, 1, 1));
+        setBorder(BorderFactory.createEmptyBorder(1, 1, 1, 1));
         this.m_Cells = new PotentialCell[Numbers.getCount()];
 
-        for(int i = 0; i < this.m_Cells.length; ++i) {
-            this.m_Cells[i] = new PotentialCell(p, Numbers.get(i), rel, s);
-            this.add(this.m_Cells[i]);
+        for(int i = 0; i < m_Cells.length; ++i) {
+            m_Cells[i] = new PotentialCell(p, Numbers.get(i), rel, s);
+            add(m_Cells[i]);
         }
 
     }
 
-    public void addCellListener(Listener<PotentialCell.SelectMessage> l) {
-        for(int i = 0; i < this.m_Cells.length; ++i) {
-            this.m_Cells[i].getRegister().add(l);
+    public final void addCellListener(final Listener<PotentialCell.SelectMessage> l) {
+        for(int i = 0; i < m_Cells.length; ++i) {
+            m_Cells[i].getRegister().add(l);
         }
 
     }
 
-    public void setVisible(boolean aFlag) {
-        for(int i = 0; i < this.m_Cells.length; ++i) {
-            this.m_Cells[i].setVisible(aFlag);
+    public final void setVisible(final boolean aFlag) {
+        for(int i = 0; i < m_Cells.length; ++i) {
+            m_Cells[i].setVisible(aFlag);
         }
 
         super.setVisible(aFlag);
     }
 
-    public PotentialCell getPotentialCell(Number number) {
-        return this.m_Cells[number.getIdentity()];
+    public final PotentialCell getPotentialCell(final Number number) {
+        return m_Cells[number.getIdentity()];
     }
 }

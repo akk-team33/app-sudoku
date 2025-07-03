@@ -8,43 +8,43 @@ import java.util.Collection;
 import java.util.Iterator;
 
 public class Choice extends Sender<Choice.Message> {
-    private Group m_ColGrp;
-    private Group m_RowGrp;
-    private Group m_AreaGrp;
-    private POTENTIAL m_Potential;
+    private final Group m_ColGrp;
+    private final Group m_RowGrp;
+    private final Group m_AreaGrp;
+    private final POTENTIAL m_Potential;
     private Number m_Number = null;
 
-    public Choice(Group colPot, Group rowPot, Group areaPot) {
+    public Choice(final Group colPot, final Group rowPot, final Group areaPot) {
         this.m_ColGrp = colPot;
         this.m_RowGrp = rowPot;
         this.m_AreaGrp = areaPot;
         this.m_Potential = new POTENTIAL();
-        this.getRegister().add(this.m_Potential.getChoiceListener());
+        getRegister().add(m_Potential.getChoiceListener());
     }
 
-    public Number getNumber() {
-        return this.m_Number;
+    public final Number getNumber() {
+        return m_Number;
     }
 
-    public void setNumber(Number n) {
-        if (n == null || this.m_Potential.includes(n)) {
-            REPORT msg = new REPORT(this.m_Number);
+    public final void setNumber(final Number n) {
+        if (n == null || m_Potential.includes(n)) {
+            final REPORT msg = new REPORT(m_Number);
             this.m_Number = n;
-            this.fire(msg);
+            fire(msg);
         }
 
     }
 
-    public Potential getPotential() {
-        return this.m_Potential;
+    public final Potential getPotential() {
+        return m_Potential;
     }
 
-    public Collection<Hint> getHints() {
-        ArrayList<Hint> ret = new ArrayList();
-        Iterator var3 = this.getPotential().getHints().iterator();
+    public final Collection<Hint> getHints() {
+        final ArrayList<Hint> ret = new ArrayList();
+        final Iterator var3 = getPotential().getHints().iterator();
 
         while(var3.hasNext()) {
-            Number n = (Number)var3.next();
+            final Number n = (Number)var3.next();
             ret.add(new Hint(this, n));
         }
 
@@ -52,7 +52,7 @@ public class Choice extends Sender<Choice.Message> {
     }
 
     private boolean _isNullNumber() {
-        return this.getNumber() == null;
+        return getNumber() == null;
     }
 
     public interface Message {
@@ -62,54 +62,50 @@ public class Choice extends Sender<Choice.Message> {
     }
 
     private class POTENTIAL extends Potential {
-        private Listener<Message> m_PotentialListener = new PotentialListener();
-        private Listener<Choice.Message> m_ChoiceListener = new ChoiceListener();
+        private final Listener<Message> m_PotentialListener = new PotentialListener();
+        private final Listener<Choice.Message> m_ChoiceListener = new ChoiceListener();
 
         public POTENTIAL() {
-            Choice.this.m_ColGrp.getPotential().getRegister().add(this.m_PotentialListener);
-            Choice.this.m_RowGrp.getPotential().getRegister().add(this.m_PotentialListener);
-            Choice.this.m_AreaGrp.getPotential().getRegister().add(this.m_PotentialListener);
+            m_ColGrp.getPotential().getRegister().add(m_PotentialListener);
+            m_RowGrp.getPotential().getRegister().add(m_PotentialListener);
+            m_AreaGrp.getPotential().getRegister().add(m_PotentialListener);
         }
 
-        public boolean includes(Number n) {
-            return Choice.this._isNullNumber() && super.includes(n) && Choice.this.m_ColGrp.getPotential().includes(n) && Choice.this.m_RowGrp.getPotential().includes(n) && Choice.this.m_AreaGrp.getPotential().includes(n);
+        public final boolean includes(final Number n) {
+            return _isNullNumber() && super.includes(n) && m_ColGrp.getPotential().includes(n) && m_RowGrp.getPotential().includes(n) && m_AreaGrp.getPotential().includes(n);
         }
 
-        public Listener<Choice.Message> getChoiceListener() {
-            return this.m_ChoiceListener;
+        public final Listener<Choice.Message> getChoiceListener() {
+            return m_ChoiceListener;
         }
 
         private class ChoiceListener implements Listener<Choice.Message> {
-            private ChoiceListener() {
-            }
 
-            public void pass(Choice.Message message) {
+            public final void pass(final Choice.Message message) {
                 fire(new Potential.REPORT());
             }
         }
 
         private class PotentialListener implements Listener<Potential.Message> {
-            private PotentialListener() {
-            }
 
-            public void pass(Potential.Message message) {
+            public final void pass(final Potential.Message message) {
                 fire(new Potential.REPORT());
             }
         }
     }
 
     private class REPORT implements Message {
-        private Number oldNumber;
+        private final Number oldNumber;
 
-        private REPORT(Number oldNumber) {
+        private REPORT(final Number oldNumber) {
             this.oldNumber = oldNumber;
         }
 
-        public Number getOldNumber() {
-            return this.oldNumber;
+        public final Number getOldNumber() {
+            return oldNumber;
         }
 
-        public Choice getSender() {
+        public final Choice getSender() {
             return Choice.this;
         }
     }

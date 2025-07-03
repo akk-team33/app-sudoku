@@ -4,8 +4,8 @@ import javax.swing.*;
 import java.awt.event.ActionListener;
 
 public abstract class XCheckBox extends JCheckBox implements ActionListener {
-    public XCheckBox(String text) {
+    public XCheckBox(final String text) {
         super(text);
-        this.addActionListener(this);
+        addActionListener(this);
     }
 }

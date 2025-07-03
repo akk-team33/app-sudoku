@@ -1,20 +1,17 @@
 package de.team33.messaging.simplex;
 
 public class Sender<MSG> implements Originator<MSG> {
-    private Router<MSG> router = new Router<>();
+    private final Router<MSG> router = new Router<>();
 
-    public Sender() {
+    public final Register<MSG> getRegister() {
+        return router;
     }
 
-    public Register<MSG> getRegister() {
-        return this.router;
+    protected final void setInitial(final MSG initial) {
+        router.setInitial(initial);
     }
 
-    protected void setInitial(MSG initial) {
-        this.router.setInitial(initial);
-    }
-
-    protected void fire(MSG message) {
-        this.router.route(message);
+    protected final void fire(final MSG message) {
+        router.route(message);
     }
 }

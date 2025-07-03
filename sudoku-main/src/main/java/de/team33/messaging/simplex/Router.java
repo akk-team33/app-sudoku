@@ -5,49 +5,44 @@ import de.team33.messaging.Listener;
 import java.util.HashSet;
 import java.util.Iterator;
 
-public class Router<MSG> implements Relay<MSG> {
-    private Router<MSG>.REGISTRY registry = new REGISTRY();
-    private MSG initial;
+public class Router<M> implements Relay<M> {
+    private final Router<M>.REGISTRY registry = new REGISTRY();
+    private M initial;
 
-    public Router() {
-    }
-
-    public void setInitial(MSG initial) {
+    @SuppressWarnings("WeakerAccess")
+    public final void setInitial(final M initial) {
         this.initial = initial;
     }
 
-    public void add(Listener<MSG> listener) {
-        synchronized(this.registry) {
-            if (this.registry.add(listener) && this.initial != null) {
-                listener.pass(this.initial);
+    public final void add(final Listener<M> listener) {
+        synchronized(registry) {
+            if (registry.add(listener) && null != initial) {
+                listener.pass(initial);
             }
-
         }
     }
 
-    public void remove(Listener<MSG> lstnr) {
-        synchronized(this.registry) {
-            this.registry.remove(lstnr);
+    public final void remove(final Listener<M> lstnr) {
+        synchronized(registry) {
+            registry.remove(lstnr);
         }
     }
 
-    public void route(MSG message) {
-        HashSet listeners;
-        synchronized(this.registry) {
-            listeners = new HashSet(this.registry);
+    public final void route(final M message) {
+        final HashSet listeners;
+        synchronized(registry) {
+            listeners = new HashSet(registry);
         }
 
-        Iterator var4 = listeners.iterator();
+        final Iterator var4 = listeners.iterator();
 
         while(var4.hasNext()) {
-            Listener<MSG> listener = (Listener)var4.next();
+            final Listener<M> listener = (Listener)var4.next();
             listener.pass(message);
         }
 
     }
 
-    private class REGISTRY extends HashSet<Listener<MSG>> {
-        private REGISTRY() {
-        }
+    private class REGISTRY extends HashSet<Listener<M>> {
     }
 }

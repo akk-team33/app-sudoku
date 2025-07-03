@@ -7,31 +7,28 @@ import java.util.Collection;
 import java.util.Iterator;
 
 public class Group {
-    private POTENTIAL m_Potential = new POTENTIAL();
-    private ArrayList<Choice> m_Choices = new ArrayList();
+    private final POTENTIAL m_Potential = new POTENTIAL();
+    private final ArrayList<Choice> m_Choices = new ArrayList();
 
-    public Group() {
+    public final Potential getPotential() {
+        return m_Potential;
     }
 
-    public Potential getPotential() {
-        return this.m_Potential;
+    public final void add(final Choice c) {
+        m_Choices.add(c);
+        c.getRegister().add(m_Potential.getChoiceListener());
     }
 
-    public void add(Choice c) {
-        this.m_Choices.add(c);
-        c.getRegister().add(this.m_Potential.getChoiceListener());
-    }
-
-    public Collection<Hint> getHints() {
-        ArrayList<Hint> ret = new ArrayList();
+    public final Collection<Hint> getHints() {
+        final ArrayList<Hint> ret = new ArrayList();
         int i = 0;
 
-        for(int n = Numbers.getCount(); i < n; ++i) {
-            ArrayList<Choice> choices = new ArrayList();
-            Iterator var6 = this.m_Choices.iterator();
+        for(final int n = Numbers.getCount(); i < n; ++i) {
+            final ArrayList<Choice> choices = new ArrayList();
+            final Iterator var6 = m_Choices.iterator();
 
             while(var6.hasNext()) {
-                Choice c = (Choice)var6.next();
+                final Choice c = (Choice)var6.next();
                 if (c.getPotential().includes(Numbers.get(i))) {
                     choices.add(c);
                 }
@@ -46,42 +43,38 @@ public class Group {
     }
 
     private class POTENTIAL extends Potential {
-        private SUB_POT m_SubPotential = new SUB_POT();
+        private final SUB_POT m_SubPotential = new SUB_POT();
 
         public POTENTIAL() {
-            this.m_SubPotential.getRegister().add(new PotentialListener());
+            m_SubPotential.getRegister().add(new PotentialListener());
         }
 
-        public boolean includes(Number n) {
-            return super.includes(n) && this.m_SubPotential.includes(n);
+        public final boolean includes(final Number n) {
+            return super.includes(n) && m_SubPotential.includes(n);
         }
 
-        public Listener<Choice.Message> getChoiceListener() {
-            return this.m_SubPotential;
+        public final Listener<Choice.Message> getChoiceListener() {
+            return m_SubPotential;
         }
 
         private class PotentialListener implements Listener<Potential.Message> {
-            private PotentialListener() {
-            }
 
-            public void pass(Potential.Message message) {
+            public final void pass(final Potential.Message message) {
                 fire(new Potential.REPORT());
             }
         }
 
         private class SUB_POT extends Potential implements Listener<Choice.Message> {
-            private SUB_POT() {
-            }
 
-            public void pass(Choice.Message message) {
-                Number newNumber = message.getSender().getNumber();
+            public final void pass(final Choice.Message message) {
+                final Number newNumber = message.getSender().getNumber();
                 if (message.getOldNumber() != newNumber) {
                     if (message.getOldNumber() != null) {
-                        this.include(message.getOldNumber(), true);
+                        include(message.getOldNumber(), true);
                     }
 
                     if (newNumber != null) {
-                        this.include(newNumber, false);
+                        include(newNumber, false);
                     }
                 }
 

@@ -10,15 +10,15 @@ import java.awt.*;
 
 public class InfoCell extends JPanel {
     private static final long serialVersionUID = 9182387339119319899L;
-    private PotentialGrid m_PotentialGrid;
+    private final PotentialGrid m_PotentialGrid;
 
-    public InfoCell(Potential p, Relay<HiliteMessage> rel, Setup s) {
+    public InfoCell(final Potential p, final Relay<HiliteMessage> rel, final Setup s) {
         super(new BorderLayout());
         this.m_PotentialGrid = new PotentialGrid(p, rel, s);
-        this.add(this.m_PotentialGrid, "Center");
+        add(m_PotentialGrid, "Center");
     }
 
-    public PotentialGrid getPotentialGrid() {
-        return this.m_PotentialGrid;
+    public final PotentialGrid getPotentialGrid() {
+        return m_PotentialGrid;
     }
 }

@@ -1,19 +1,19 @@
 package de.team33.sudoku;
 
 public class HiliteMessage {
-    private Object m_Spec;
-    private boolean m_Hilited;
+    private final Object m_Spec;
+    private final boolean m_Hilited;
 
-    public HiliteMessage(Object spec, boolean hilited) {
+    public HiliteMessage(final Object spec, final boolean hilited) {
         this.m_Spec = spec;
         this.m_Hilited = hilited;
     }
 
-    public Object getSpec() {
-        return this.m_Spec;
+    public final Object getSpec() {
+        return m_Spec;
     }
 
-    public boolean getHilited() {
-        return this.m_Hilited;
+    public final boolean getHilited() {
+        return m_Hilited;
     }
 }

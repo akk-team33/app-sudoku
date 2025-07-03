@@ -14,33 +14,33 @@ import java.util.Iterator;
 
 public class MainFrame extends JFrame {
     private static final long serialVersionUID = 1831349627175488437L;
-    private Sudoku m_Sudoku;
+    private final Sudoku m_Sudoku;
     private ChoiceGrid m_ChoiceGrid;
-    private Setup m_Setup = new Setup();
-    private HiliteRelayPool m_FlagRouterPool = new HiliteRelayPool();
+    private final Setup m_Setup = new Setup();
+    private final HiliteRelayPool m_FlagRouterPool = new HiliteRelayPool();
 
-    public MainFrame(Sudoku s) {
+    public MainFrame(final Sudoku s) {
         super("Sudoku");
         this.m_Sudoku = s;
-        this.setDefaultCloseOperation(2);
-        this.add(new CENTER_PANE(s), "Center");
-        this.add(new EAST_PANE(s), "East");
-        this.pack();
+        setDefaultCloseOperation(2);
+        add(new CENTER_PANE(s), "Center");
+        add(new EAST_PANE(s), "East");
+        pack();
     }
 
     private class ACTN_AUTOHINT extends XCheckBox implements Listener<Setup> {
         public ACTN_AUTOHINT() {
             super("Vorschläge");
-            this.addActionListener(this);
-            MainFrame.this.m_Setup.getRegister().add(this);
+            addActionListener(this);
+            m_Setup.getRegister().add(this);
         }
 
-        public void actionPerformed(ActionEvent e) {
-            MainFrame.this.m_Setup.setAutoHinting(this.isSelected());
+        public final void actionPerformed(final ActionEvent e) {
+            m_Setup.setAutoHinting(isSelected());
         }
 
-        public void pass(Setup sender) {
-            this.setSelected(sender.getAutoHinting());
+        public final void pass(final Setup sender) {
+            setSelected(sender.getAutoHinting());
         }
     }
 
@@ -51,8 +51,8 @@ public class MainFrame extends JFrame {
             super("Klonen");
         }
 
-        public void actionPerformed(ActionEvent e) {
-            (new MainFrame(new Sudoku(MainFrame.this.m_Sudoku))).setVisible(true);
+        public final void actionPerformed(final ActionEvent e) {
+            (new MainFrame(new Sudoku(m_Sudoku))).setVisible(true);
         }
     }
 
@@ -61,28 +61,28 @@ public class MainFrame extends JFrame {
 
         public ACTN_GRID() {
             super(new GridLayout(0, 1, 1, 1));
-            this.setBorder(BorderFactory.createEmptyBorder(1, 1, 1, 1));
-            this.add(MainFrame.this.new ACTN_CLONE());
-            this.add(MainFrame.this.new ACTN_RST());
-            this.add(MainFrame.this.new ACTN_HINT());
-            this.add(MainFrame.this.new ACTN_HILITE());
-            this.add(MainFrame.this.new ACTN_AUTOHINT());
+            setBorder(BorderFactory.createEmptyBorder(1, 1, 1, 1));
+            add(MainFrame.this.new ACTN_CLONE());
+            add(MainFrame.this.new ACTN_RST());
+            add(MainFrame.this.new ACTN_HINT());
+            add(MainFrame.this.new ACTN_HILITE());
+            add(MainFrame.this.new ACTN_AUTOHINT());
         }
     }
 
     private class ACTN_HILITE extends XCheckBox implements Listener<Setup> {
         public ACTN_HILITE() {
             super("Gruppenhinweis");
-            this.addActionListener(this);
-            MainFrame.this.m_Setup.getRegister().add(this);
+            addActionListener(this);
+            m_Setup.getRegister().add(this);
         }
 
-        public void actionPerformed(ActionEvent e) {
-            MainFrame.this.m_Setup.setGroupHiliting(this.isSelected());
+        public final void actionPerformed(final ActionEvent e) {
+            m_Setup.setGroupHiliting(isSelected());
         }
 
-        public void pass(Setup sender) {
-            this.setSelected(sender.getGroupHiliting());
+        public final void pass(final Setup sender) {
+            setSelected(sender.getGroupHiliting());
         }
     }
 
@@ -93,12 +93,12 @@ public class MainFrame extends JFrame {
             super("Vorschläge");
         }
 
-        public void actionPerformed(ActionEvent e) {
-            Iterator var3 = MainFrame.this.m_Sudoku.getHints().iterator();
+        public final void actionPerformed(final ActionEvent e) {
+            final Iterator var3 = m_Sudoku.getHints().iterator();
 
             while(var3.hasNext()) {
-                Hint h = (Hint)var3.next();
-                MainFrame.this.m_ChoiceGrid.getPotentialCell(h.getChoice(), h.getNumber()).setHinting(true);
+                final Hint h = (Hint)var3.next();
+                m_ChoiceGrid.getPotentialCell(h.getChoice(), h.getNumber()).setHinting(true);
             }
 
         }
@@ -111,33 +111,33 @@ public class MainFrame extends JFrame {
             super("Reset");
         }
 
-        public void actionPerformed(ActionEvent e) {
-            MainFrame.this.m_Sudoku.reset();
+        public final void actionPerformed(final ActionEvent e) {
+            m_Sudoku.reset();
         }
     }
 
     private class CENTER_PANE extends JPanel {
         private static final long serialVersionUID = -3672158492746235449L;
 
-        public CENTER_PANE(Sudoku s) {
+        public CENTER_PANE(final Sudoku s) {
             super(new GridBagLayout());
-            this.add(new ColInfoGrid(s, MainFrame.this.m_FlagRouterPool, MainFrame.this.m_Setup), MainFrame.this.new CONSTRAINTS(3, 1, 9, 1));
-            this.add(new RowInfoGrid(s, MainFrame.this.m_FlagRouterPool, MainFrame.this.m_Setup), MainFrame.this.new CONSTRAINTS(1, 3, 1, 9));
-            this.add(new AreaInfoGrid(s, MainFrame.this.m_FlagRouterPool, MainFrame.this.m_Setup), MainFrame.this.new CONSTRAINTS(13, 3, 3, 3));
-            this.add(new JPanel(), MainFrame.this.new CONSTRAINTS(0, 0, 1, 1));
-            this.add(new JPanel(), MainFrame.this.new CONSTRAINTS(2, 2, 1, 1));
-            this.add(new JPanel(), MainFrame.this.new CONSTRAINTS(12, 2, 1, 1));
-            this.add(new JPanel(), MainFrame.this.new CONSTRAINTS(16, 13, 1, 1));
-            ChoiceGrid var10003 = new ChoiceGrid(s, MainFrame.this.m_FlagRouterPool, MainFrame.this.m_Setup);
+            add(new ColInfoGrid(s, m_FlagRouterPool, m_Setup), MainFrame.this.new CONSTRAINTS(3, 1, 9, 1));
+            add(new RowInfoGrid(s, m_FlagRouterPool, m_Setup), MainFrame.this.new CONSTRAINTS(1, 3, 1, 9));
+            add(new AreaInfoGrid(s, m_FlagRouterPool, m_Setup), MainFrame.this.new CONSTRAINTS(13, 3, 3, 3));
+            add(new JPanel(), MainFrame.this.new CONSTRAINTS(0, 0, 1, 1));
+            add(new JPanel(), MainFrame.this.new CONSTRAINTS(2, 2, 1, 1));
+            add(new JPanel(), MainFrame.this.new CONSTRAINTS(12, 2, 1, 1));
+            add(new JPanel(), MainFrame.this.new CONSTRAINTS(16, 13, 1, 1));
+            final ChoiceGrid var10003 = new ChoiceGrid(s, m_FlagRouterPool, m_Setup);
             MainFrame.this.m_ChoiceGrid = var10003;
-            this.add(var10003, MainFrame.this.new CONSTRAINTS(3, 3, 9, 9));
+            add(var10003, MainFrame.this.new CONSTRAINTS(3, 3, 9, 9));
         }
     }
 
     private class CONSTRAINTS extends GridBagConstraints {
         private static final long serialVersionUID = 7841150408814921710L;
 
-        public CONSTRAINTS(int gridx, int gridy, int gridwidth, int gridheight) {
+        public CONSTRAINTS(final int gridx, final int gridy, final int gridwidth, final int gridheight) {
             super(gridx, gridy, gridwidth, gridheight, 0.0, 0.0, 10, 1, new Insets(0, 0, 0, 0), 0, 0);
         }
     }
@@ -145,34 +145,34 @@ public class MainFrame extends JFrame {
     private class EAST_PANE extends JPanel {
         private static final long serialVersionUID = -1633863694402998797L;
 
-        public EAST_PANE(Sudoku s) {
+        public EAST_PANE(final Sudoku s) {
             super(new BorderLayout());
-            this.setBorder(BorderFactory.createRaisedBevelBorder());
-            this.add(MainFrame.this.new ACTN_GRID(), "North");
-            this.add(MainFrame.this.new INFO_GRID(s), "South");
+            setBorder(BorderFactory.createRaisedBevelBorder());
+            add(MainFrame.this.new ACTN_GRID(), "North");
+            add(MainFrame.this.new INFO_GRID(s), "South");
         }
     }
 
     private class INFO_GRID extends JPanel implements Listener<Choice.Message> {
-        private INFO_LBL[] m_Labels;
+        private final INFO_LBL[] m_Labels;
         private int[] m_Values = new int[10];
 
-        public INFO_GRID(Sudoku s) {
+        public INFO_GRID(final Sudoku s) {
             super(new GridLayout(0, 2, 1, 1));
-            this.setBorder(BorderFactory.createEmptyBorder(1, 1, 1, 1));
+            setBorder(BorderFactory.createEmptyBorder(1, 1, 1, 1));
             this.m_Values = new int[Numbers.getCount() + 1];
             this.m_Labels = new INFO_LBL[Numbers.getCount() + 1];
 
             int y;
-            for(y = 1; y < this.m_Labels.length; ++y) {
-                this.m_Labels[y] = MainFrame.this.new INFO_LBL(0);
-                this.add(MainFrame.this.new INFO_LBL(y));
-                this.add(this.m_Labels[y]);
+            for(y = 1; y < m_Labels.length; ++y) {
+                m_Labels[y] = MainFrame.this.new INFO_LBL(0);
+                add(MainFrame.this.new INFO_LBL(y));
+                add(m_Labels[y]);
             }
 
-            this.m_Labels[0] = MainFrame.this.new INFO_LBL(0);
-            this.add(MainFrame.this.new INFO_LBL("Gesamt"));
-            this.add(this.m_Labels[0]);
+            m_Labels[0] = MainFrame.this.new INFO_LBL(0);
+            add(MainFrame.this.new INFO_LBL("Gesamt"));
+            add(m_Labels[0]);
 
             for(y = 0; y < Numbers.getCount(); ++y) {
                 for(int x = 0; x < Numbers.getCount(); ++x) {
@@ -182,24 +182,24 @@ public class MainFrame extends JFrame {
 
         }
 
-        public void pass(Choice.Message message) {
-            de.team33.sudoku.Number newNumber = message.getSender().getNumber();
-            Number oldNumber = message.getOldNumber();
+        public final void pass(final Choice.Message message) {
+            final de.team33.sudoku.Number newNumber = message.getSender().getNumber();
+            final Number oldNumber = message.getOldNumber();
             if (oldNumber != newNumber) {
                 int var10002;
-                int i;
+                final int i;
                 if (oldNumber == null) {
                     i = newNumber.getIdentity() + 1;
-                    var10002 = this.m_Values[i]++;
-                    this.m_Labels[i].setText("" + this.m_Values[i]);
-                    var10002 = this.m_Values[0]++;
-                    this.m_Labels[0].setText("" + this.m_Values[0]);
+                    var10002 = m_Values[i]++;
+                    m_Labels[i].setText("" + m_Values[i]);
+                    var10002 = m_Values[0]++;
+                    m_Labels[0].setText("" + m_Values[0]);
                 } else if (newNumber == null) {
                     i = oldNumber.getIdentity() + 1;
-                    var10002 = this.m_Values[i]--;
-                    this.m_Labels[i].setText("" + this.m_Values[i]);
-                    var10002 = this.m_Values[0]--;
-                    this.m_Labels[0].setText("" + this.m_Values[0]);
+                    var10002 = m_Values[i]--;
+                    m_Labels[i].setText("" + m_Values[i]);
+                    var10002 = m_Values[0]--;
+                    m_Labels[0].setText("" + m_Values[0]);
                 }
             }
 
@@ -209,15 +209,15 @@ public class MainFrame extends JFrame {
     private class INFO_LBL extends JLabel {
         private static final long serialVersionUID = 612779410579559915L;
 
-        public INFO_LBL(String s) {
+        public INFO_LBL(final String s) {
             super(s);
-            this.setHorizontalAlignment(0);
-            this.setVerticalAlignment(0);
-            this.setOpaque(true);
-            this.setBackground(Color.WHITE);
+            setHorizontalAlignment(0);
+            setVerticalAlignment(0);
+            setOpaque(true);
+            setBackground(Color.WHITE);
         }
 
-        public INFO_LBL(int i) {
+        public INFO_LBL(final int i) {
             this("" + i);
         }
     }

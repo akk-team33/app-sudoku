@@ -5,69 +5,64 @@ import de.team33.messaging.simplex.Relay;
 import de.team33.messaging.simplex.Router;
 
 public class HiliteRelayPool {
-    private GROUP_ROUTER[] router = new GROUP_ROUTER[3 * Numbers.getCount()];
+    private final GROUP_ROUTER[] router = new GROUP_ROUTER[3 * Numbers.getCount()];
 
-    public HiliteRelayPool() {
+    public final Relay<HiliteMessage> getColRelay(final int x) {
+        return getGrpRelay(0, x);
     }
 
-    public Relay<HiliteMessage> getColRelay(int x) {
-        return this.getGrpRelay(0, x);
+    public final Relay<HiliteMessage> getRowRelay(final int y) {
+        return getGrpRelay(1, y);
     }
 
-    public Relay<HiliteMessage> getRowRelay(int y) {
-        return this.getGrpRelay(1, y);
+    public final Relay<HiliteMessage> getAreaRelay(final int z) {
+        return getGrpRelay(2, z);
     }
 
-    public Relay<HiliteMessage> getAreaRelay(int z) {
-        return this.getGrpRelay(2, z);
-    }
-
-    public Relay<HiliteMessage> getCellRelay(int x, int y) {
-        int rdx = Numbers.getRadix();
+    public final Relay<HiliteMessage> getCellRelay(final int x, final int y) {
+        final int rdx = Numbers.getRadix();
         return new CELL_ROUTER(x, y, y / rdx * rdx + x / rdx);
     }
 
-    private GROUP_ROUTER getGrpRelay(int i, int k) {
-        int n = i * Numbers.getCount() + k;
-        if (this.router[n] == null) {
-            this.router[n] = new GROUP_ROUTER();
+    private GROUP_ROUTER getGrpRelay(final int i, final int k) {
+        final int n = i * Numbers.getCount() + k;
+        if (router[n] == null) {
+            router[n] = new GROUP_ROUTER();
         }
 
-        return this.router[n];
+        return router[n];
     }
 
     private class CELL_ROUTER implements Relay<HiliteMessage> {
-        private int m_x;
-        private int m_y;
-        private int m_z;
+        private final int m_x;
+        private final int m_y;
+        private final int m_z;
 
-        public CELL_ROUTER(int x, int y, int z) {
+        public CELL_ROUTER(final int x, final int y, final int z) {
             this.m_x = x;
             this.m_y = y;
             this.m_z = z;
         }
 
-        public void add(Listener<HiliteMessage> l) {
-            HiliteRelayPool.this.getColRelay(this.m_x).add(l);
-            HiliteRelayPool.this.getRowRelay(this.m_y).add(l);
-            HiliteRelayPool.this.getAreaRelay(this.m_z).add(l);
+        public final void add(final Listener<HiliteMessage> l) {
+            getColRelay(m_x).add(l);
+            getRowRelay(m_y).add(l);
+            getAreaRelay(m_z).add(l);
         }
 
-        public void remove(Listener<HiliteMessage> l) {
-            HiliteRelayPool.this.getColRelay(this.m_x).remove(l);
-            HiliteRelayPool.this.getRowRelay(this.m_y).remove(l);
-            HiliteRelayPool.this.getAreaRelay(this.m_z).remove(l);
+        public final void remove(final Listener<HiliteMessage> l) {
+            getColRelay(m_x).remove(l);
+            getRowRelay(m_y).remove(l);
+            getAreaRelay(m_z).remove(l);
         }
 
-        public void route(HiliteMessage message) {
-            HiliteRelayPool.this.getColRelay(this.m_x).route(message);
-            HiliteRelayPool.this.getRowRelay(this.m_y).route(message);
-            HiliteRelayPool.this.getAreaRelay(this.m_z).route(message);
+        public final void route(final HiliteMessage message) {
+            getColRelay(m_x).route(message);
+            getRowRelay(m_y).route(message);
+            getAreaRelay(m_z).route(message);
         }
     }
 
     private static class GROUP_ROUTER extends Router<HiliteMessage> {
-        private GROUP_ROUTER() {
-        }
     }
 }

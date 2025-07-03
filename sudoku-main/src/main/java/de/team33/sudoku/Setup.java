@@ -6,29 +6,26 @@ public class Setup extends Sender<Setup> {
     private boolean m_AutoHinting = false;
     private boolean m_GroupHiliting = false;
 
-    public Setup() {
+    public final boolean getAutoHinting() {
+        return m_AutoHinting;
     }
 
-    public boolean getAutoHinting() {
-        return this.m_AutoHinting;
+    public final boolean getGroupHiliting() {
+        return m_GroupHiliting;
     }
 
-    public boolean getGroupHiliting() {
-        return this.m_GroupHiliting;
-    }
-
-    public void setAutoHinting(boolean b) {
-        if (this.m_AutoHinting != b) {
+    public final void setAutoHinting(final boolean b) {
+        if (m_AutoHinting != b) {
             this.m_AutoHinting = b;
-            this.fire(this);
+            fire(this);
         }
 
     }
 
-    public void setGroupHiliting(boolean b) {
-        if (this.m_GroupHiliting != b) {
+    public final void setGroupHiliting(final boolean b) {
+        if (m_GroupHiliting != b) {
             this.m_GroupHiliting = b;
-            this.fire(this);
+            fire(this);
         }
 
     }

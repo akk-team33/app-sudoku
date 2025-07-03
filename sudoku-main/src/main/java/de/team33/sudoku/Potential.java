@@ -8,29 +8,26 @@ import java.util.Collection;
 public abstract class Potential extends Sender<Potential.Message> {
     private int m_ValueMask = 0;
 
-    public Potential() {
+    public boolean includes(final Number n) {
+        return (m_ValueMask & 1 << n.getIdentity()) == 0;
     }
 
-    public boolean includes(Number n) {
-        return (this.m_ValueMask & 1 << n.getIdentity()) == 0;
-    }
-
-    public void include(Number n, boolean include) {
+    public final void include(final Number n, final boolean include) {
         if (include) {
             this.m_ValueMask &= ~(1 << n.getIdentity());
         } else {
             this.m_ValueMask |= 1 << n.getIdentity();
         }
 
-        this.fire(new REPORT());
+        fire(new REPORT());
     }
 
-    public Collection<Number> getNumbers() {
-        ArrayList<Number> ret = new ArrayList();
+    public final Collection<Number> getNumbers() {
+        final ArrayList<Number> ret = new ArrayList();
         int i = 0;
 
-        for(int n = Numbers.getCount(); i < n; ++i) {
-            if (this.includes(Numbers.get(i))) {
+        for(final int n = Numbers.getCount(); i < n; ++i) {
+            if (includes(Numbers.get(i))) {
                 ret.add(Numbers.get(i));
             }
         }
@@ -38,8 +35,8 @@ public abstract class Potential extends Sender<Potential.Message> {
         return ret;
     }
 
-    public Collection<Number> getHints() {
-        Collection<Number> ret = this.getNumbers();
+    public final Collection<Number> getHints() {
+        final Collection<Number> ret = getNumbers();
         if (ret.size() != 1) {
             ret.clear();
         }
@@ -47,9 +44,9 @@ public abstract class Potential extends Sender<Potential.Message> {
         return ret;
     }
 
-    public void reset() {
+    public final void reset() {
         this.m_ValueMask = 0;
-        this.fire(new REPORT());
+        fire(new REPORT());
     }
 
     public interface Message {
@@ -57,10 +54,8 @@ public abstract class Potential extends Sender<Potential.Message> {
     }
 
     protected class REPORT implements Message {
-        protected REPORT() {
-        }
 
-        public Potential getSender() {
+        public final Potential getSender() {
             return Potential.this;
         }
     }
