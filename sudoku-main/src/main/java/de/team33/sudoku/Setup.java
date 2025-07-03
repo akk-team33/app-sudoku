@@ -1,8 +1,3 @@
-//
-// Source code recreated from a .class file by IntelliJ IDEA
-// (powered by FernFlower decompiler)
-//
-
 package de.team33.sudoku;
 
 import de.team33.messaging.simplex.Sender;
