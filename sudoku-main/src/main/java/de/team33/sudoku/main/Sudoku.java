@@ -5,10 +5,10 @@ import de.team33.sudoku.ui.MainFrame;
 
 import javax.swing.*;
 
-public class Main implements Runnable {
+public class Sudoku implements Runnable {
 
     public static void main(final String[] args) {
-        SwingUtilities.invokeLater(new Main());
+        SwingUtilities.invokeLater(new Sudoku());
     }
 
     public final void run() {

@@ -41,7 +41,7 @@
                             <archive>
                                 <manifest>
                                     <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
-                                    <mainClass>de.team33.sudoku.main.Main</mainClass>
+                                    <mainClass>de.team33.sudoku.main.Sudoku</mainClass>
                                 </manifest>
                             </archive>
                             <descriptors>
