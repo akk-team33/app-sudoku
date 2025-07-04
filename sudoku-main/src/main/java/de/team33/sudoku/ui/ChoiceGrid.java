@@ -16,11 +16,11 @@ import java.util.Iterator;
 public class ChoiceGrid extends BasicInfoGrid {
     private final ArrayList<CELL> m_Cells;
 
-    public ChoiceGrid(final Sudoku s, final HiliteRelayPool frp, final Setup su) {
+    public ChoiceGrid(final Board s, final HiliteRelayPool frp, final Setup su) {
         this(s, Numbers.getRadix(), frp, su);
     }
 
-    public ChoiceGrid(final Sudoku s, final int radix, final HiliteRelayPool frp, final Setup su) {
+    public ChoiceGrid(final Board s, final int radix, final HiliteRelayPool frp, final Setup su) {
         super(radix, radix);
         this.m_Cells = new ArrayList();
 
@@ -49,7 +49,7 @@ public class ChoiceGrid extends BasicInfoGrid {
     private class AREA extends BasicInfoGrid.Area {
         private static final long serialVersionUID = -6063977488067059587L;
 
-        public AREA(final Sudoku s, final int radix, final HiliteRelayPool frp, final Setup su, final int x0, final int y0) {
+        public AREA(final Board s, final int radix, final HiliteRelayPool frp, final Setup su, final int x0, final int y0) {
             super(radix, radix);
 
             for(int dy = 0; dy < radix; ++dy) {

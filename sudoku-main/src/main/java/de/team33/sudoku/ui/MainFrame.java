@@ -14,14 +14,14 @@ import java.util.Iterator;
 
 public class MainFrame extends JFrame {
     private static final long serialVersionUID = 1831349627175488437L;
-    private final Sudoku m_Sudoku;
+    private final Board m_Board;
     private ChoiceGrid m_ChoiceGrid;
     private final Setup m_Setup = new Setup();
     private final HiliteRelayPool m_FlagRouterPool = new HiliteRelayPool();
 
-    public MainFrame(final Sudoku s) {
+    public MainFrame(final Board s) {
         super("Sudoku");
-        this.m_Sudoku = s;
+        this.m_Board = s;
         setDefaultCloseOperation(2);
         add(new CENTER_PANE(s), "Center");
         add(new EAST_PANE(s), "East");
@@ -52,7 +52,7 @@ public class MainFrame extends JFrame {
         }
 
         public final void actionPerformed(final ActionEvent e) {
-            (new MainFrame(new Sudoku(m_Sudoku))).setVisible(true);
+            (new MainFrame(new Board(m_Board))).setVisible(true);
         }
     }
 
@@ -94,7 +94,7 @@ public class MainFrame extends JFrame {
         }
 
         public final void actionPerformed(final ActionEvent e) {
-            final Iterator var3 = m_Sudoku.getHints().iterator();
+            final Iterator var3 = m_Board.getHints().iterator();
 
             while(var3.hasNext()) {
                 final Hint h = (Hint)var3.next();
@@ -112,14 +112,14 @@ public class MainFrame extends JFrame {
         }
 
         public final void actionPerformed(final ActionEvent e) {
-            m_Sudoku.reset();
+            m_Board.reset();
         }
     }
 
     private class CENTER_PANE extends JPanel {
         private static final long serialVersionUID = -3672158492746235449L;
 
-        public CENTER_PANE(final Sudoku s) {
+        public CENTER_PANE(final Board s) {
             super(new GridBagLayout());
             add(new ColInfoGrid(s, m_FlagRouterPool, m_Setup), MainFrame.this.new CONSTRAINTS(3, 1, 9, 1));
             add(new RowInfoGrid(s, m_FlagRouterPool, m_Setup), MainFrame.this.new CONSTRAINTS(1, 3, 1, 9));
@@ -145,7 +145,7 @@ public class MainFrame extends JFrame {
     private class EAST_PANE extends JPanel {
         private static final long serialVersionUID = -1633863694402998797L;
 
-        public EAST_PANE(final Sudoku s) {
+        public EAST_PANE(final Board s) {
             super(new BorderLayout());
             setBorder(BorderFactory.createRaisedBevelBorder());
             add(MainFrame.this.new ACTN_GRID(), "North");
@@ -157,7 +157,7 @@ public class MainFrame extends JFrame {
         private final INFO_LBL[] m_Labels;
         private int[] m_Values = new int[10];
 
-        public INFO_GRID(final Sudoku s) {
+        public INFO_GRID(final Board s) {
             super(new GridLayout(0, 2, 1, 1));
             setBorder(BorderFactory.createEmptyBorder(1, 1, 1, 1));
             this.m_Values = new int[Numbers.getCount() + 1];

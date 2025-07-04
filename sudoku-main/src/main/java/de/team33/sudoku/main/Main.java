@@ -1,6 +1,6 @@
 package de.team33.sudoku.main;
 
-import de.team33.sudoku.Sudoku;
+import de.team33.sudoku.Board;
 import de.team33.sudoku.ui.MainFrame;
 
 import javax.swing.*;
@@ -12,6 +12,6 @@ public class Main implements Runnable {
     }
 
     public final void run() {
-        (new MainFrame(new Sudoku())).setVisible(true);
+        (new MainFrame(new Board())).setVisible(true);
     }
 }

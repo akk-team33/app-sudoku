@@ -2,12 +2,13 @@ package de.team33.sudoku;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
-public class Sudoku {
+public class Board {
     private final Choice[] m_Choice;
     private final GROUP[] m_Group;
 
-    public Sudoku() {
+    public Board() {
         final int radix = Numbers.getRadix();
         final int count = Numbers.getCount();
         this.m_Group = new GROUP[3 * count];
@@ -31,18 +32,17 @@ public class Sudoku {
 
     }
 
-    public Sudoku(final Sudoku jig) {
+    public Board(final Board jig) {
         this();
 
         for(int i = 0; i < m_Choice.length; ++i) {
             m_Choice[i].setNumber(jig.m_Choice[i].getNumber());
         }
-
     }
 
     public final void reset() {
         for(int i = 0; i < m_Choice.length; ++i) {
-            m_Choice[i].setNumber((Number)null);
+            m_Choice[i].setNumber(null);
         }
 
     }
@@ -64,18 +64,14 @@ public class Sudoku {
     }
 
     public final Collection<Hint> getHints() {
-        final ArrayList<Hint> ret = new ArrayList();
+        final List<Hint> ret = new ArrayList<>();
 
-        int i;
-        Collection hints;
-        for(i = 0; i < m_Choice.length; ++i) {
-            hints = m_Choice[i].getHints();
-            ret.addAll(hints);
+        for (final Choice choice : m_Choice) {
+            ret.addAll(choice.getHints());
         }
 
-        for(i = 0; i < m_Group.length; ++i) {
-            hints = m_Group[i].getHints();
-            ret.addAll(hints);
+        for (final GROUP group : m_Group) {
+            ret.addAll(group.getHints());
         }
 
         return ret;
@@ -85,6 +81,6 @@ public class Sudoku {
         return m_Group[3 * i + spec % 3];
     }
 
-    private class GROUP extends Group {
+    private static class GROUP extends Group {
     }
 }

@@ -4,6 +4,7 @@ import de.team33.messaging.simplex.Sender;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 public abstract class Potential extends Sender<Potential.Message> {
     private int m_ValueMask = 0;
@@ -23,7 +24,7 @@ public abstract class Potential extends Sender<Potential.Message> {
     }
 
     public final Collection<Number> getNumbers() {
-        final ArrayList<Number> ret = new ArrayList();
+        final List<Number> ret = new ArrayList();
         int i = 0;
 
         for(final int n = Numbers.getCount(); i < n; ++i) {

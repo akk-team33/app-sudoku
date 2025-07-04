@@ -6,6 +6,7 @@ import de.team33.messaging.simplex.Sender;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.List;
 
 public class Choice extends Sender<Choice.Message> {
     private final Group m_ColGrp;
@@ -28,7 +29,7 @@ public class Choice extends Sender<Choice.Message> {
 
     public final void setNumber(final Number n) {
         if (n == null || m_Potential.includes(n)) {
-            final REPORT msg = new REPORT(m_Number);
+            final Message msg = new REPORT(m_Number);
             this.m_Number = n;
             fire(msg);
         }
@@ -40,7 +41,7 @@ public class Choice extends Sender<Choice.Message> {
     }
 
     public final Collection<Hint> getHints() {
-        final ArrayList<Hint> ret = new ArrayList();
+        final List<Hint> ret = new ArrayList();
         final Iterator var3 = getPotential().getHints().iterator();
 
         while(var3.hasNext()) {

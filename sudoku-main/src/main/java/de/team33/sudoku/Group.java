@@ -5,10 +5,11 @@ import de.team33.messaging.Listener;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.List;
 
 public class Group {
     private final POTENTIAL m_Potential = new POTENTIAL();
-    private final ArrayList<Choice> m_Choices = new ArrayList();
+    private final List<Choice> m_Choices = new ArrayList();
 
     public final Potential getPotential() {
         return m_Potential;
@@ -20,7 +21,7 @@ public class Group {
     }
 
     public final Collection<Hint> getHints() {
-        final ArrayList<Hint> ret = new ArrayList();
+        final List<Hint> ret = new ArrayList();
         int i = 0;
 
         for(final int n = Numbers.getCount(); i < n; ++i) {
