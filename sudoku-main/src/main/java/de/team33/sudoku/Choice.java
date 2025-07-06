@@ -9,16 +9,16 @@ import java.util.Iterator;
 import java.util.List;
 
 public class Choice extends Sender<Choice.Message> {
-    private final Group m_ColGrp;
-    private final Group m_RowGrp;
-    private final Group m_AreaGrp;
+    private final Group colGrp;
+    private final Group rowGrp;
+    private final Group areaGrp;
     private final POTENTIAL m_Potential;
     private Number m_Number = null;
 
     public Choice(final Group colPot, final Group rowPot, final Group areaPot) {
-        this.m_ColGrp = colPot;
-        this.m_RowGrp = rowPot;
-        this.m_AreaGrp = areaPot;
+        this.colGrp = colPot;
+        this.rowGrp = rowPot;
+        this.areaGrp = areaPot;
         this.m_Potential = new POTENTIAL();
         getRegister().add(m_Potential.getChoiceListener());
     }
@@ -62,36 +62,23 @@ public class Choice extends Sender<Choice.Message> {
         Number getOldNumber();
     }
 
-    private class POTENTIAL extends Potential {
-        private final Consumer<Message> m_PotentialListener = new PotentialListener();
-        private final Consumer<Choice.Message> m_ChoiceListener = new ChoiceListener();
+    private final class POTENTIAL extends Potential {
 
-        public POTENTIAL() {
-            m_ColGrp.getPotential().getRegister().add(m_PotentialListener);
-            m_RowGrp.getPotential().getRegister().add(m_PotentialListener);
-            m_AreaGrp.getPotential().getRegister().add(m_PotentialListener);
+        private final Consumer<Choice.Message> choiceListener = message -> fire(new Potential.REPORT());
+
+        private POTENTIAL() {
+            final Consumer<Message> listener = message -> fire(new REPORT());
+            for (final Group group: List.of(colGrp, rowGrp, areaGrp)) {
+                group.getPotential().getRegister().add(listener);
+            }
         }
 
         public final boolean includes(final Number n) {
-            return _isNullNumber() && super.includes(n) && m_ColGrp.getPotential().includes(n) && m_RowGrp.getPotential().includes(n) && m_AreaGrp.getPotential().includes(n);
+            return _isNullNumber() && super.includes(n) && colGrp.getPotential().includes(n) && rowGrp.getPotential().includes(n) && areaGrp.getPotential().includes(n);
         }
 
         public final Consumer<Choice.Message> getChoiceListener() {
-            return m_ChoiceListener;
-        }
-
-        private class ChoiceListener implements Consumer<Choice.Message> {
-
-            public final void accept(final Choice.Message message) {
-                fire(new Potential.REPORT());
-            }
-        }
-
-        private class PotentialListener implements Consumer<Message> {
-
-            public final void accept(final Potential.Message message) {
-                fire(new Potential.REPORT());
-            }
+            return choiceListener;
         }
     }
 
