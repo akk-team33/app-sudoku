@@ -1,6 +1,6 @@
 package de.team33.sudoku;
 
-import de.team33.messaging.Listener;
+import de.team33.messaging.Consumer;
 import de.team33.messaging.simplex.Relay;
 import de.team33.messaging.simplex.Router;
 
@@ -44,13 +44,13 @@ public class HiliteRelayPool {
             this.m_z = z;
         }
 
-        public final void add(final Listener<HiliteMessage> l) {
+        public final void add(final Consumer<HiliteMessage> l) {
             getColRelay(m_x).add(l);
             getRowRelay(m_y).add(l);
             getAreaRelay(m_z).add(l);
         }
 
-        public final void remove(final Listener<HiliteMessage> l) {
+        public final void remove(final Consumer<HiliteMessage> l) {
             getColRelay(m_x).remove(l);
             getRowRelay(m_y).remove(l);
             getAreaRelay(m_z).remove(l);

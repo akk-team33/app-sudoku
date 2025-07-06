@@ -1,6 +1,6 @@
 package de.team33.sudoku.ui;
 
-import de.team33.messaging.Listener;
+import de.team33.messaging.Consumer;
 import de.team33.messaging.simplex.Relay;
 import de.team33.sudoku.Number;
 import de.team33.sudoku.*;
@@ -24,7 +24,7 @@ public class PotentialGrid extends JPanel {
 
     }
 
-    public final void addCellListener(final Listener<PotentialCell.SelectMessage> l) {
+    public final void addCellListener(final Consumer<PotentialCell.SelectMessage> l) {
         for(int i = 0; i < m_Cells.length; ++i) {
             m_Cells[i].getRegister().add(l);
         }

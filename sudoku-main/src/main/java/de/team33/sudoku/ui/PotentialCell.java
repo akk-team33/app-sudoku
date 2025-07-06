@@ -1,6 +1,6 @@
 package de.team33.sudoku.ui;
 
-import de.team33.messaging.Listener;
+import de.team33.messaging.Consumer;
 import de.team33.messaging.simplex.Originator;
 import de.team33.messaging.simplex.Register;
 import de.team33.messaging.simplex.Relay;
@@ -175,9 +175,9 @@ public class PotentialCell extends JLabel implements Originator<PotentialCell.Se
         }
     }
 
-    private class HiliteListener implements Listener<HiliteMessage> {
+    private class HiliteListener implements Consumer<HiliteMessage> {
 
-        public final void pass(final HiliteMessage message) {
+        public final void accept(final HiliteMessage message) {
             if (message.getSpec().equals(number)) {
                 _setHilited(message.getHilited());
             }
@@ -196,9 +196,9 @@ public class PotentialCell extends JLabel implements Originator<PotentialCell.Se
         }
     }
 
-    private class PotentialListener implements Listener<Potential.Message> {
+    private class PotentialListener implements Consumer<Potential.Message> {
 
-        public final void pass(final Potential.Message message) {
+        public final void accept(final Potential.Message message) {
             _setExcluded(!message.getSender().includes(number));
         }
     }

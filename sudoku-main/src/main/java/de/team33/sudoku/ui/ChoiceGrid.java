@@ -1,6 +1,6 @@
 package de.team33.sudoku.ui;
 
-import de.team33.messaging.Listener;
+import de.team33.messaging.Consumer;
 import de.team33.messaging.simplex.Relay;
 import de.team33.sudoku.Choice;
 import de.team33.sudoku.Number;
@@ -90,9 +90,9 @@ public class ChoiceGrid extends BasicInfoGrid {
             }
         }
 
-        private class ChoiceListener implements Listener<Choice.Message> {
+        private class ChoiceListener implements Consumer<Choice.Message> {
 
-            public final void pass(final Choice.Message message) {
+            public final void accept(final Choice.Message message) {
                 final de.team33.sudoku.Number newNumber = message.getSender().getNumber();
                 final de.team33.sudoku.Number oldNumber = message.getOldNumber();
                 if (oldNumber != newNumber) {
@@ -136,9 +136,9 @@ public class ChoiceGrid extends BasicInfoGrid {
             }
         }
 
-        private class PotentialCellListener implements Listener<PotentialCell.SelectMessage> {
+        private class PotentialCellListener implements Consumer<PotentialCell.SelectMessage> {
 
-            public final void pass(final PotentialCell.SelectMessage message) {
+            public final void accept(final PotentialCell.SelectMessage message) {
                 m_Choice.setNumber(message.getNumber());
             }
         }

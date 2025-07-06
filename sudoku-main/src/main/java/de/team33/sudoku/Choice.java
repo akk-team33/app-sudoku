@@ -1,6 +1,6 @@
 package de.team33.sudoku;
 
-import de.team33.messaging.Listener;
+import de.team33.messaging.Consumer;
 import de.team33.messaging.simplex.Sender;
 
 import java.util.ArrayList;
@@ -63,8 +63,8 @@ public class Choice extends Sender<Choice.Message> {
     }
 
     private class POTENTIAL extends Potential {
-        private final Listener<Message> m_PotentialListener = new PotentialListener();
-        private final Listener<Choice.Message> m_ChoiceListener = new ChoiceListener();
+        private final Consumer<Message> m_PotentialListener = new PotentialListener();
+        private final Consumer<Choice.Message> m_ChoiceListener = new ChoiceListener();
 
         public POTENTIAL() {
             m_ColGrp.getPotential().getRegister().add(m_PotentialListener);
@@ -76,20 +76,20 @@ public class Choice extends Sender<Choice.Message> {
             return _isNullNumber() && super.includes(n) && m_ColGrp.getPotential().includes(n) && m_RowGrp.getPotential().includes(n) && m_AreaGrp.getPotential().includes(n);
         }
 
-        public final Listener<Choice.Message> getChoiceListener() {
+        public final Consumer<Choice.Message> getChoiceListener() {
             return m_ChoiceListener;
         }
 
-        private class ChoiceListener implements Listener<Choice.Message> {
+        private class ChoiceListener implements Consumer<Choice.Message> {
 
-            public final void pass(final Choice.Message message) {
+            public final void accept(final Choice.Message message) {
                 fire(new Potential.REPORT());
             }
         }
 
-        private class PotentialListener implements Listener<Potential.Message> {
+        private class PotentialListener implements Consumer<Message> {
 
-            public final void pass(final Potential.Message message) {
+            public final void accept(final Potential.Message message) {
                 fire(new Potential.REPORT());
             }
         }

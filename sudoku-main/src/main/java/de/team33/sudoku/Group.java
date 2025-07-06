@@ -1,6 +1,6 @@
 package de.team33.sudoku;
 
-import de.team33.messaging.Listener;
+import de.team33.messaging.Consumer;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -54,20 +54,20 @@ public class Group {
             return super.includes(n) && m_SubPotential.includes(n);
         }
 
-        public final Listener<Choice.Message> getChoiceListener() {
+        public final Consumer<Choice.Message> getChoiceListener() {
             return m_SubPotential;
         }
 
-        private class PotentialListener implements Listener<Potential.Message> {
+        private class PotentialListener implements Consumer<Message> {
 
-            public final void pass(final Potential.Message message) {
+            public final void accept(final Potential.Message message) {
                 fire(new Potential.REPORT());
             }
         }
 
-        private class SUB_POT extends Potential implements Listener<Choice.Message> {
+        private class SUB_POT extends Potential implements Consumer<Choice.Message> {
 
-            public final void pass(final Choice.Message message) {
+            public final void accept(final Choice.Message message) {
                 final Number newNumber = message.getSender().getNumber();
                 if (message.getOldNumber() != newNumber) {
                     if (message.getOldNumber() != null) {

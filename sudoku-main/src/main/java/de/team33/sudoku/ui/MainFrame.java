@@ -1,6 +1,6 @@
 package de.team33.sudoku.ui;
 
-import de.team33.messaging.Listener;
+import de.team33.messaging.Consumer;
 import de.team33.sudoku.Choice;
 import de.team33.sudoku.Number;
 import de.team33.sudoku.*;
@@ -28,7 +28,7 @@ public class MainFrame extends JFrame {
         pack();
     }
 
-    private class ACTN_AUTOHINT extends XCheckBox implements Listener<Setup> {
+    private class ACTN_AUTOHINT extends XCheckBox implements Consumer<Setup> {
         public ACTN_AUTOHINT() {
             super("Vorschläge");
             addActionListener(this);
@@ -39,7 +39,7 @@ public class MainFrame extends JFrame {
             m_Setup.setAutoHinting(isSelected());
         }
 
-        public final void pass(final Setup sender) {
+        public final void accept(final Setup sender) {
             setSelected(sender.getAutoHinting());
         }
     }
@@ -70,7 +70,7 @@ public class MainFrame extends JFrame {
         }
     }
 
-    private class ACTN_HILITE extends XCheckBox implements Listener<Setup> {
+    private class ACTN_HILITE extends XCheckBox implements Consumer<Setup> {
         public ACTN_HILITE() {
             super("Gruppenhinweis");
             addActionListener(this);
@@ -81,7 +81,7 @@ public class MainFrame extends JFrame {
             m_Setup.setGroupHiliting(isSelected());
         }
 
-        public final void pass(final Setup sender) {
+        public final void accept(final Setup sender) {
             setSelected(sender.getGroupHiliting());
         }
     }
@@ -153,7 +153,7 @@ public class MainFrame extends JFrame {
         }
     }
 
-    private class INFO_GRID extends JPanel implements Listener<Choice.Message> {
+    private class INFO_GRID extends JPanel implements Consumer<Choice.Message> {
         private final INFO_LBL[] m_Labels;
         private int[] m_Values = new int[10];
 
@@ -182,7 +182,7 @@ public class MainFrame extends JFrame {
 
         }
 
-        public final void pass(final Choice.Message message) {
+        public final void accept(final Choice.Message message) {
             final de.team33.sudoku.Number newNumber = message.getSender().getNumber();
             final Number oldNumber = message.getOldNumber();
             if (oldNumber != newNumber) {
