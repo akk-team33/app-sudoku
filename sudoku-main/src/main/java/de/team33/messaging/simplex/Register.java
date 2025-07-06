@@ -1,6 +1,6 @@
 package de.team33.messaging.simplex;
 
-import de.team33.messaging.Consumer;
+import java.util.function.Consumer;
 
 public interface Register<MSG> {
 

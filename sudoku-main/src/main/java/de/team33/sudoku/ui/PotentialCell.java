@@ -1,6 +1,5 @@
 package de.team33.sudoku.ui;
 
-import de.team33.messaging.Consumer;
 import de.team33.messaging.simplex.Originator;
 import de.team33.messaging.simplex.Register;
 import de.team33.messaging.simplex.Relay;
@@ -14,6 +13,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.util.function.Consumer;
 
 public class PotentialCell extends JLabel implements Originator<PotentialCell.SelectMessage> {
     private final Setup setup;

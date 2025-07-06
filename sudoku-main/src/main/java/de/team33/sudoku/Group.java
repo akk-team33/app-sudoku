@@ -1,11 +1,10 @@
 package de.team33.sudoku;
 
-import de.team33.messaging.Consumer;
-
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
+import java.util.function.Consumer;
 
 public class Group {
     private final POTENTIAL m_Potential = new POTENTIAL();
@@ -47,7 +46,7 @@ public class Group {
         private final SUB_POT m_SubPotential = new SUB_POT();
 
         public POTENTIAL() {
-            m_SubPotential.getRegister().add(new PotentialListener());
+            m_SubPotential.getRegister().add(m -> fire(new Potential.REPORT()));
         }
 
         public final boolean includes(final Number n) {
@@ -56,13 +55,6 @@ public class Group {
 
         public final Consumer<Choice.Message> getChoiceListener() {
             return m_SubPotential;
-        }
-
-        private class PotentialListener implements Consumer<Message> {
-
-            public final void accept(final Potential.Message message) {
-                fire(new Potential.REPORT());
-            }
         }
 
         private class SUB_POT extends Potential implements Consumer<Choice.Message> {

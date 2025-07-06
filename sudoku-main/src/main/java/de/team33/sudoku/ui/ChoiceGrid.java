@@ -1,6 +1,5 @@
 package de.team33.sudoku.ui;
 
-import de.team33.messaging.Consumer;
 import de.team33.messaging.simplex.Relay;
 import de.team33.sudoku.Choice;
 import de.team33.sudoku.Number;
@@ -12,6 +11,7 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.function.Consumer;
 
 public class ChoiceGrid extends BasicInfoGrid {
     private final ArrayList<CELL> m_Cells;

@@ -1,9 +1,8 @@
 package de.team33.messaging.simplex;
 
-import de.team33.messaging.Consumer;
-
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.function.Consumer;
 
 public class Router<M> implements Relay<M> {
     private final Router<M>.REGISTRY registry = new REGISTRY();

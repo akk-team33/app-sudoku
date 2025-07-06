@@ -1,8 +1,9 @@
 package de.team33.sudoku;
 
-import de.team33.messaging.Consumer;
 import de.team33.messaging.simplex.Relay;
 import de.team33.messaging.simplex.Router;
+
+import java.util.function.Consumer;
 
 public class HiliteRelayPool {
     private final GROUP_ROUTER[] router = new GROUP_ROUTER[3 * Numbers.getCount()];

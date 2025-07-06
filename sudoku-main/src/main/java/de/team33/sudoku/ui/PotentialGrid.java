@@ -1,12 +1,12 @@
 package de.team33.sudoku.ui;
 
-import de.team33.messaging.Consumer;
 import de.team33.messaging.simplex.Relay;
 import de.team33.sudoku.Number;
 import de.team33.sudoku.*;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.function.Consumer;
 
 public class PotentialGrid extends JPanel {
     private static final long serialVersionUID = -3142888299633458277L;

@@ -1,6 +1,5 @@
 package de.team33.sudoku.ui;
 
-import de.team33.messaging.Consumer;
 import de.team33.sudoku.Choice;
 import de.team33.sudoku.Number;
 import de.team33.sudoku.*;
@@ -11,6 +10,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.util.Iterator;
+import java.util.function.Consumer;
 
 public class MainFrame extends JFrame {
     private static final long serialVersionUID = 1831349627175488437L;

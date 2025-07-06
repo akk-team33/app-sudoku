@@ -1,12 +1,12 @@
 package de.team33.sudoku;
 
-import de.team33.messaging.Consumer;
 import de.team33.messaging.simplex.Sender;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
+import java.util.function.Consumer;
 
 public class Choice extends Sender<Choice.Message> {
     private final Group colGrp;
