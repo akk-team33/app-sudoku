@@ -1,42 +1,61 @@
 package de.team33.sudoku.ui;
 
 import de.team33.messaging.Listener;
+import de.team33.sphinx.alpha.activity.Event;
+import de.team33.sphinx.alpha.visual.JButtons;
+import de.team33.sphinx.alpha.visual.JFrames;
+import de.team33.sphinx.alpha.visual.JPanels;
 import de.team33.sudoku.Choice;
 import de.team33.sudoku.Number;
 import de.team33.sudoku.*;
-import de.team33.swinx.XButton;
 import de.team33.swinx.XCheckBox;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
-import java.util.Iterator;
 
 public class MainFrame extends JFrame {
-    private static final long serialVersionUID = 1831349627175488437L;
-    private final Board m_Board;
-    private ChoiceGrid m_ChoiceGrid;
-    private final Setup m_Setup = new Setup();
-    private final HiliteRelayPool m_FlagRouterPool = new HiliteRelayPool();
 
-    public MainFrame(final Board s) {
-        super("Sudoku");
-        this.m_Board = s;
-        setDefaultCloseOperation(2);
-        add(new CENTER_PANE(s), "Center");
-        add(new EAST_PANE(s), "East");
-        pack();
+    public static final Insets INSETS = new Insets(0, 0, 0, 0);
+
+    private final Setup setup;
+    private final HiliteRelayPool hiliteRelayPool;
+    private final Board board;
+    private final ChoiceGrid choiceGrid;
+
+    private MainFrame(final Core core) {
+        setup = core.setup;
+        hiliteRelayPool = core.hiliteRelayPool;
+        board = core.board;
+        choiceGrid = core.choiceGrid;
+    }
+
+    public static MainFrame showing(final Board board) {
+        final Core core = new Core(new Setup(), new HiliteRelayPool(), board, null).withChoiceGrid();
+        return JFrames.builder(() -> new MainFrame(core))
+                      .setTitle("Sudoku")
+                      .setDefaultCloseOperation(DISPOSE_ON_CLOSE)
+                      .add(centerPane(core), BorderLayout.CENTER)
+                      .add(eastPane(core), BorderLayout.EAST)
+                      .pack()
+                      .build();
+    }
+
+    private record Core(Setup setup, HiliteRelayPool hiliteRelayPool, Board board, ChoiceGrid choiceGrid) {
+        private Core withChoiceGrid() {
+            return new Core(setup, hiliteRelayPool, board, new ChoiceGrid(board,hiliteRelayPool, setup));
+        }
     }
 
     private class ACTN_AUTOHINT extends XCheckBox implements Listener<Setup> {
         public ACTN_AUTOHINT() {
             super("Vorschläge");
             addActionListener(this);
-            m_Setup.getRegister().add(this);
+            setup.getRegister().add(this);
         }
 
         public final void actionPerformed(final ActionEvent e) {
-            m_Setup.setAutoHinting(isSelected());
+            setup.setAutoHinting(isSelected());
         }
 
         public final void pass(final Setup sender) {
@@ -44,41 +63,34 @@ public class MainFrame extends JFrame {
         }
     }
 
-    private class ACTN_CLONE extends XButton {
-        private static final long serialVersionUID = 1790144176265133751L;
-
-        public ACTN_CLONE() {
-            super("Klonen");
-        }
-
-        public final void actionPerformed(final ActionEvent e) {
-            (new MainFrame(new Board(m_Board))).setVisible(true);
-        }
+    private static JButton actionClone(final Core core) {
+        return JButtons.builder()
+                       .setText("Klonen")
+                       .on(Event.ACTION_PERFORMED, e -> showing(new Board(core.board)).setVisible(true))
+                       .build();
     }
 
-    private class ACTN_GRID extends JPanel {
-        private static final long serialVersionUID = 4308135792072114290L;
-
-        public ACTN_GRID() {
-            super(new GridLayout(0, 1, 1, 1));
-            setBorder(BorderFactory.createEmptyBorder(1, 1, 1, 1));
-            add(MainFrame.this.new ACTN_CLONE());
-            add(MainFrame.this.new ACTN_RST());
-            add(MainFrame.this.new ACTN_HINT());
-            add(MainFrame.this.new ACTN_HILITE());
-            add(MainFrame.this.new ACTN_AUTOHINT());
-        }
+    private static JPanel actionGrid(final Core core) {
+        return JPanels.builder()
+                      .setLayout(new GridLayout(0, 1, 1, 1))
+                      .setBorder(BorderFactory.createEmptyBorder(1, 1, 1, 1))
+                      .add(actionClone(core))
+                      .add(actionReset(core))
+                      .add(actionHint(core))
+                      .add(new ACTN_HILITE())
+                      .add(new ACTN_AUTOHINT())
+                      .build();
     }
 
     private class ACTN_HILITE extends XCheckBox implements Listener<Setup> {
         public ACTN_HILITE() {
             super("Gruppenhinweis");
             addActionListener(this);
-            m_Setup.getRegister().add(this);
+            setup.getRegister().add(this);
         }
 
         public final void actionPerformed(final ActionEvent e) {
-            m_Setup.setGroupHiliting(isSelected());
+            setup.setGroupHiliting(isSelected());
         }
 
         public final void pass(final Setup sender) {
@@ -86,71 +98,53 @@ public class MainFrame extends JFrame {
         }
     }
 
-    private class ACTN_HINT extends XButton {
-        private static final long serialVersionUID = -4563457510867828343L;
+    private static JButton actionHint(final Core core) {
+        return JButtons.builder()
+                       .setText("Vorschläge")
+                       .on(Event.ACTION_PERFORMED, e -> actionHintPerformed(core))
+                       .build();
+    }
 
-        public ACTN_HINT() {
-            super("Vorschläge");
-        }
-
-        public final void actionPerformed(final ActionEvent e) {
-            final Iterator var3 = m_Board.getHints().iterator();
-
-            while(var3.hasNext()) {
-                final Hint h = (Hint)var3.next();
-                m_ChoiceGrid.getPotentialCell(h.getChoice(), h.getNumber()).setHinting(true);
-            }
-
+    private static void actionHintPerformed(final Core core) {
+        for (final Hint h : core.board.getHints()) {
+            core.choiceGrid.getPotentialCell(h.getChoice(), h.getNumber())
+                           .setHinting(true);
         }
     }
 
-    private class ACTN_RST extends XButton {
-        private static final long serialVersionUID = -2896338482672752542L;
-
-        public ACTN_RST() {
-            super("Reset");
-        }
-
-        public final void actionPerformed(final ActionEvent e) {
-            m_Board.reset();
-        }
+    private static JButton actionReset(final Core core) {
+        return JButtons.builder()
+                       .setText("Reset")
+                       .on(Event.ACTION_PERFORMED, e -> core.board.reset())
+                       .build();
     }
 
-    private class CENTER_PANE extends JPanel {
-        private static final long serialVersionUID = -3672158492746235449L;
-
-        public CENTER_PANE(final Board s) {
-            super(new GridBagLayout());
-            add(new ColInfoGrid(s, m_FlagRouterPool, m_Setup), MainFrame.this.new CONSTRAINTS(3, 1, 9, 1));
-            add(new RowInfoGrid(s, m_FlagRouterPool, m_Setup), MainFrame.this.new CONSTRAINTS(1, 3, 1, 9));
-            add(new AreaInfoGrid(s, m_FlagRouterPool, m_Setup), MainFrame.this.new CONSTRAINTS(13, 3, 3, 3));
-            add(new JPanel(), MainFrame.this.new CONSTRAINTS(0, 0, 1, 1));
-            add(new JPanel(), MainFrame.this.new CONSTRAINTS(2, 2, 1, 1));
-            add(new JPanel(), MainFrame.this.new CONSTRAINTS(12, 2, 1, 1));
-            add(new JPanel(), MainFrame.this.new CONSTRAINTS(16, 13, 1, 1));
-            final ChoiceGrid var10003 = new ChoiceGrid(s, m_FlagRouterPool, m_Setup);
-            MainFrame.this.m_ChoiceGrid = var10003;
-            add(var10003, MainFrame.this.new CONSTRAINTS(3, 3, 9, 9));
-        }
+    private static JPanel centerPane(final Core core) {
+        return JPanels.builder()
+                      .setLayout(new GridBagLayout())
+                      .add(new ColInfoGrid(core.board, core.hiliteRelayPool, core.setup), constraints(3, 1, 9, 1))
+                      .add(new RowInfoGrid(core.board, core.hiliteRelayPool, core.setup), constraints(1, 3, 1, 9))
+                      .add(new AreaInfoGrid(core.board, core.hiliteRelayPool, core.setup), constraints(13, 3, 3, 3))
+                      .add(new JPanel(), constraints(0, 0, 1, 1))
+                      .add(new JPanel(), constraints(2, 2, 1, 1))
+                      .add(new JPanel(), constraints(12, 2, 1, 1))
+                      .add(new JPanel(), constraints(16, 13, 1, 1))
+                      .add(core.choiceGrid, constraints(3, 3, 9, 9))
+                      .build();
     }
 
-    private class CONSTRAINTS extends GridBagConstraints {
-        private static final long serialVersionUID = 7841150408814921710L;
-
-        public CONSTRAINTS(final int gridx, final int gridy, final int gridwidth, final int gridheight) {
-            super(gridx, gridy, gridwidth, gridheight, 0.0, 0.0, 10, 1, new Insets(0, 0, 0, 0), 0, 0);
-        }
+    private static GridBagConstraints constraints(final int gridx, final int gridy,
+                                                  final int gridwidth, final int gridheight) {
+        return new GridBagConstraints(gridx, gridy, gridwidth, gridheight, 0.0, 0.0, 10, 1, INSETS, 0, 0);
     }
 
-    private class EAST_PANE extends JPanel {
-        private static final long serialVersionUID = -1633863694402998797L;
-
-        public EAST_PANE(final Board s) {
-            super(new BorderLayout());
-            setBorder(BorderFactory.createRaisedBevelBorder());
-            add(MainFrame.this.new ACTN_GRID(), "North");
-            add(MainFrame.this.new INFO_GRID(s), "South");
-        }
+    private static JPanel eastPane(final Core core) {
+        return JPanels.builder()
+                      .setLayout(new BorderLayout())
+                      .setBorder(BorderFactory.createRaisedBevelBorder())
+                      .add(actionGrid(core), BorderLayout.NORTH)
+                      .add(new INFO_GRID(core), BorderLayout.SOUTH)
+                      .build();
     }
 
     private class INFO_GRID extends JPanel implements Listener<Choice.Message> {
