@@ -1,185 +1,180 @@
 package de.team33.sudoku.ui;
 
+import de.team33.sphinx.alpha.activity.Event;
+import de.team33.sphinx.alpha.visual.JButtons;
+import de.team33.sphinx.alpha.visual.JCheckBoxes;
+import de.team33.sphinx.alpha.visual.JLabels;
+import de.team33.sphinx.alpha.visual.JPanels;
 import de.team33.sudoku.Choice;
 import de.team33.sudoku.Number;
 import de.team33.sudoku.*;
-import de.team33.swinx.XButton;
-import de.team33.swinx.XCheckBox;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
-import java.util.Iterator;
 import java.util.function.Consumer;
 
 public class MainFrame extends JFrame {
-    private static final long serialVersionUID = 1831349627175488437L;
-    private final Board m_Board;
-    private ChoiceGrid m_ChoiceGrid;
-    private final Setup m_Setup = new Setup();
-    private final HiliteRelayPool m_FlagRouterPool = new HiliteRelayPool();
 
-    public MainFrame(final Board s) {
+    private static final Insets INSETS_0000 = new Insets(0, 0, 0, 0);
+
+    private final Setup setup;
+    private final HiliteRelayPool hiliteRelayPool;
+    private final Board board;
+    private final ChoiceGrid choiceGrid;
+
+    public MainFrame(final Board board) {
         super("Sudoku");
-        this.m_Board = s;
-        setDefaultCloseOperation(2);
-        add(new CENTER_PANE(s), "Center");
-        add(new EAST_PANE(s), "East");
+
+        final Requisite requisite = requisite(board);
+        this.setup = requisite.setup;
+        this.hiliteRelayPool = requisite.hiliteRelayPool;
+        this.board = requisite.board;
+        this.choiceGrid = requisite.choiceGrid;
+
+        setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+        add(new CENTER_PANE(requisite), BorderLayout.CENTER);
+        add(new EAST_PANE(requisite), BorderLayout.EAST);
         pack();
     }
 
-    private class ACTN_AUTOHINT extends XCheckBox implements Consumer<Setup> {
-        public ACTN_AUTOHINT() {
-            super("Vorschläge");
-            addActionListener(this);
-            m_Setup.getRegister().add(this);
-        }
+    private static Requisite requisite(final Board board) {
+        return new Requisite(new Setup(), new HiliteRelayPool(), board, null).withChoiceGrid();
+    }
 
-        public final void actionPerformed(final ActionEvent e) {
-            m_Setup.setAutoHinting(isSelected());
-        }
+    private static GridBagConstraints constraints(final int x, final int y, final int width, final int height) {
+        return new GridBagConstraints(x, y, width, height, 0.0, 0.0, 10, 1, INSETS_0000, 0, 0);
+    }
 
-        public final void accept(final Setup sender) {
-            setSelected(sender.getAutoHinting());
+    private static JButton cloneButton(final Requisite req) {
+        return JButtons.builder()
+                       .setText("Clone")
+                       .on(Event.ACTION_PERFORMED, e -> (new MainFrame(new Board(req.board))).setVisible(true))
+                       .build();
+    }
+
+    private static JCheckBox hiliteCheckBox(final Requisite req) {
+        return JCheckBoxes.builder()
+                          .setText("Group Hints")
+                          .on(Event.ACTION_PERFORMED, e -> onHiliteCheckBox(e, req))
+                          .setup(cb -> req.setup.getRegister()
+                                                .add(setup -> cb.setSelected(setup.getGroupHiliting())))
+                          .build();
+    }
+
+    private static void onHiliteCheckBox(final ActionEvent event, final Requisite req) {
+        final JCheckBox source = (JCheckBox) event.getSource();
+        req.setup.setGroupHiliting(source.isSelected());
+    }
+
+    private static JButton proposalButton(final Requisite req) {
+        return JButtons.builder()
+                       .setText("Proposals")
+                       .on(Event.ACTION_PERFORMED, e -> onProposalButton(req))
+                       .build();
+    }
+
+    private static void onProposalButton(final Requisite req) {
+        for (final Hint h : req.board.getHints()) {
+            req.choiceGrid.getPotentialCell(h.getChoice(), h.getNumber())
+                          .setHinting(true);
         }
     }
 
-    private class ACTN_CLONE extends XButton {
-        private static final long serialVersionUID = 1790144176265133751L;
+    private static JButton resetButton(final Requisite req) {
+        return JButtons.builder()
+                       .setText("Reset")
+                       .on(Event.ACTION_PERFORMED, e -> req.board.reset())
+                       .build();
+    }
 
-        public ACTN_CLONE() {
-            super("Klonen");
-        }
+    private static JCheckBox autoHintCheckBox(final Requisite req) {
+        return JCheckBoxes.builder()
+                          .setText("Auto Proposals")
+                          .on(Event.ACTION_PERFORMED, e -> onAutoHintCheckBox(e, req.setup))
+                          .setup(cb -> req.setup.getRegister()
+                                                .add(setup -> cb.setSelected(setup.getAutoHinting())))
+                          .build();
+    }
 
-        public final void actionPerformed(final ActionEvent e) {
-            (new MainFrame(new Board(m_Board))).setVisible(true);
+    private static void onAutoHintCheckBox(final ActionEvent event, final Setup setup) {
+        final JCheckBox checkBox = (JCheckBox) event.getSource();
+        setup.setAutoHinting(checkBox.isSelected());
+    }
+
+    private record Requisite(Setup setup, HiliteRelayPool hiliteRelayPool, Board board, ChoiceGrid choiceGrid) {
+
+        private Requisite withChoiceGrid() {
+            return new Requisite(setup, hiliteRelayPool, board, new ChoiceGrid(board, hiliteRelayPool, setup));
         }
     }
 
-    private class ACTN_GRID extends JPanel {
-        private static final long serialVersionUID = 4308135792072114290L;
-
-        public ACTN_GRID() {
-            super(new GridLayout(0, 1, 1, 1));
-            setBorder(BorderFactory.createEmptyBorder(1, 1, 1, 1));
-            add(MainFrame.this.new ACTN_CLONE());
-            add(MainFrame.this.new ACTN_RST());
-            add(MainFrame.this.new ACTN_HINT());
-            add(MainFrame.this.new ACTN_HILITE());
-            add(MainFrame.this.new ACTN_AUTOHINT());
-        }
-    }
-
-    private class ACTN_HILITE extends XCheckBox implements Consumer<Setup> {
-        public ACTN_HILITE() {
-            super("Gruppenhinweis");
-            addActionListener(this);
-            m_Setup.getRegister().add(this);
-        }
-
-        public final void actionPerformed(final ActionEvent e) {
-            m_Setup.setGroupHiliting(isSelected());
-        }
-
-        public final void accept(final Setup sender) {
-            setSelected(sender.getGroupHiliting());
-        }
-    }
-
-    private class ACTN_HINT extends XButton {
-        private static final long serialVersionUID = -4563457510867828343L;
-
-        public ACTN_HINT() {
-            super("Vorschläge");
-        }
-
-        public final void actionPerformed(final ActionEvent e) {
-            final Iterator var3 = m_Board.getHints().iterator();
-
-            while(var3.hasNext()) {
-                final Hint h = (Hint)var3.next();
-                m_ChoiceGrid.getPotentialCell(h.getChoice(), h.getNumber()).setHinting(true);
-            }
-
-        }
-    }
-
-    private class ACTN_RST extends XButton {
-        private static final long serialVersionUID = -2896338482672752542L;
-
-        public ACTN_RST() {
-            super("Reset");
-        }
-
-        public final void actionPerformed(final ActionEvent e) {
-            m_Board.reset();
-        }
-    }
-
-    private class CENTER_PANE extends JPanel {
+    private static class CENTER_PANE extends JPanel {
         private static final long serialVersionUID = -3672158492746235449L;
 
-        public CENTER_PANE(final Board s) {
+        public CENTER_PANE(final Requisite req) {
             super(new GridBagLayout());
-            add(new ColInfoGrid(s, m_FlagRouterPool, m_Setup), MainFrame.this.new CONSTRAINTS(3, 1, 9, 1));
-            add(new RowInfoGrid(s, m_FlagRouterPool, m_Setup), MainFrame.this.new CONSTRAINTS(1, 3, 1, 9));
-            add(new AreaInfoGrid(s, m_FlagRouterPool, m_Setup), MainFrame.this.new CONSTRAINTS(13, 3, 3, 3));
-            add(new JPanel(), MainFrame.this.new CONSTRAINTS(0, 0, 1, 1));
-            add(new JPanel(), MainFrame.this.new CONSTRAINTS(2, 2, 1, 1));
-            add(new JPanel(), MainFrame.this.new CONSTRAINTS(12, 2, 1, 1));
-            add(new JPanel(), MainFrame.this.new CONSTRAINTS(16, 13, 1, 1));
-            final ChoiceGrid var10003 = new ChoiceGrid(s, m_FlagRouterPool, m_Setup);
-            MainFrame.this.m_ChoiceGrid = var10003;
-            add(var10003, MainFrame.this.new CONSTRAINTS(3, 3, 9, 9));
+            add(new ColInfoGrid(req.board, req.hiliteRelayPool, req.setup), constraints(3, 1, 9, 1));
+            add(new RowInfoGrid(req.board, req.hiliteRelayPool, req.setup), constraints(1, 3, 1, 9));
+            add(new AreaInfoGrid(req.board, req.hiliteRelayPool, req.setup), constraints(13, 3, 3, 3));
+            add(new JPanel(), constraints(0, 0, 1, 1));
+            add(new JPanel(), constraints(2, 2, 1, 1));
+            add(new JPanel(), constraints(12, 2, 1, 1));
+            add(new JPanel(), constraints(16, 13, 1, 1));
+            add(req.choiceGrid, constraints(3, 3, 9, 9));
+            // add(new ChoiceGrid(req.board, req.hiliteRelayPool, req.setup), constraints(3, 3, 9, 9));
         }
     }
 
-    private class CONSTRAINTS extends GridBagConstraints {
-        private static final long serialVersionUID = 7841150408814921710L;
-
-        public CONSTRAINTS(final int gridx, final int gridy, final int gridwidth, final int gridheight) {
-            super(gridx, gridy, gridwidth, gridheight, 0.0, 0.0, 10, 1, new Insets(0, 0, 0, 0), 0, 0);
-        }
+    private static JPanel actionGrid(final Requisite req) {
+        return JPanels.builder()
+                      .setLayout(new GridLayout(0, 1, 1, 1))
+                      .setBorder(BorderFactory.createEmptyBorder(1, 1, 1, 1))
+                      .add(cloneButton(req))
+                      .add(resetButton(req))
+                      .add(proposalButton(req))
+                      .add(hiliteCheckBox(req))
+                      .add(autoHintCheckBox(req))
+                      .build();
     }
 
     private class EAST_PANE extends JPanel {
         private static final long serialVersionUID = -1633863694402998797L;
 
-        public EAST_PANE(final Board s) {
+        public EAST_PANE(final Requisite req) {
             super(new BorderLayout());
             setBorder(BorderFactory.createRaisedBevelBorder());
-            add(MainFrame.this.new ACTN_GRID(), "North");
-            add(MainFrame.this.new INFO_GRID(s), "South");
+            add(actionGrid(req), BorderLayout.NORTH);
+            add(MainFrame.this.new INFO_GRID(req), BorderLayout.SOUTH);
         }
     }
 
-    private class INFO_GRID extends JPanel implements Consumer<Choice.Message> {
-        private final INFO_LBL[] m_Labels;
+    private static class INFO_GRID extends JPanel implements Consumer<Choice.Message> {
+        private final JLabel[] m_Labels;
         private int[] m_Values = new int[10];
 
-        public INFO_GRID(final Board s) {
+        public INFO_GRID(final Requisite req) {
             super(new GridLayout(0, 2, 1, 1));
             setBorder(BorderFactory.createEmptyBorder(1, 1, 1, 1));
             this.m_Values = new int[Numbers.getCount() + 1];
-            this.m_Labels = new INFO_LBL[Numbers.getCount() + 1];
+            this.m_Labels = new JLabel[Numbers.getCount() + 1];
 
             int y;
-            for(y = 1; y < m_Labels.length; ++y) {
-                m_Labels[y] = MainFrame.this.new INFO_LBL(0);
-                add(MainFrame.this.new INFO_LBL(y));
+            for (y = 1; y < m_Labels.length; ++y) {
+                m_Labels[y] = infoLabel(0);
+                add(infoLabel(y));
                 add(m_Labels[y]);
             }
 
-            m_Labels[0] = MainFrame.this.new INFO_LBL(0);
-            add(MainFrame.this.new INFO_LBL("Gesamt"));
+            m_Labels[0] = infoLabel(0);
+            add(infoLabel("Gesamt"));
             add(m_Labels[0]);
 
-            for(y = 0; y < Numbers.getCount(); ++y) {
-                for(int x = 0; x < Numbers.getCount(); ++x) {
-                    s.getChoice(x, y).getRegister().add(this);
+            for (y = 0; y < Numbers.getCount(); ++y) {
+                for (int x = 0; x < Numbers.getCount(); ++x) {
+                    req.board.getChoice(x, y).getRegister().add(this);
                 }
             }
-
         }
 
         public final void accept(final Choice.Message message) {
@@ -206,19 +201,17 @@ public class MainFrame extends JFrame {
         }
     }
 
-    private class INFO_LBL extends JLabel {
-        private static final long serialVersionUID = 612779410579559915L;
+    private static JLabel infoLabel(final int value) {
+        return infoLabel("" + value);
+    }
 
-        public INFO_LBL(final String s) {
-            super(s);
-            setHorizontalAlignment(0);
-            setVerticalAlignment(0);
-            setOpaque(true);
-            setBackground(Color.WHITE);
-        }
-
-        public INFO_LBL(final int i) {
-            this("" + i);
-        }
+    private static JLabel infoLabel(final String text) {
+        return JLabels.builder()
+                      .setText(text)
+                      .setHorizontalAlignment(SwingConstants.CENTER)
+                      .setVerticalAlignment(SwingConstants.CENTER)
+                      .setOpaque(true)
+                      .setBackground(Color.WHITE)
+                      .build();
     }
 }
