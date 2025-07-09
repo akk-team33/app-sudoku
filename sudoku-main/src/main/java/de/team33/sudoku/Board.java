@@ -5,24 +5,26 @@ import java.util.Collection;
 import java.util.List;
 
 public class Board {
+
+    private final int base;
     private final Choice[] m_Choice;
     private final GROUP[] m_Group;
 
     public Board() {
         final int radix = Numbers.getRadix();
-        final int count = Numbers.getCount();
-        this.m_Group = new GROUP[3 * count];
+        this.base = Numbers.getCount();
+        this.m_Group = new GROUP[3 * base];
 
         int i;
         for(i = 0; i < m_Group.length; ++i) {
             m_Group[i] = new GROUP();
         }
 
-        this.m_Choice = new Choice[count * count];
+        this.m_Choice = new Choice[base * base];
 
         for(i = 0; i < m_Choice.length; ++i) {
-            final int y = i / count;
-            final int x = i % count;
+            final int y = i / base;
+            final int x = i % base;
             final int z = y / radix * radix + x / radix;
             m_Choice[i] = new Choice(getColGrp(x), getRowGrp(y), getAreaGrp(z));
             getColGrp(x).add(m_Choice[i]);
@@ -38,6 +40,10 @@ public class Board {
         for(int i = 0; i < m_Choice.length; ++i) {
             m_Choice[i].setNumber(jig.m_Choice[i].getNumber());
         }
+    }
+
+    public final int base() {
+        return base;
     }
 
     public final void reset() {

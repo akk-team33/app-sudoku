@@ -40,24 +40,29 @@ public class PotentialCell extends JLabel implements Originator<PotentialCell.Se
         addMouseListener(new ADAPTER());
     }
 
+    @Override
     public final Register<SelectMessage> getRegister() {
         return selectRouter;
     }
 
+    @Override
     public final Dimension getPreferredSize() {
         final Dimension retValue = super.getPreferredSize();
         retValue.width = retValue.height;
         return retValue;
     }
 
+    @Override
     public final Dimension getMinimumSize() {
         return getPreferredSize();
     }
 
+    @Override
     public final Dimension getMaximumSize() {
         return getPreferredSize();
     }
 
+    @Override
     public final void setVisible(final boolean aFlag) {
         if (!aFlag && _isTouched()) {
             _setTouched(false);
@@ -148,6 +153,7 @@ public class PotentialCell extends JLabel implements Originator<PotentialCell.Se
 
     private class ADAPTER extends MouseAdapter {
 
+        @Override
         public final void mouseReleased(final MouseEvent e) {
             if (e.getButton() == 1) {
                 if (!_isExcluded()) {
@@ -160,6 +166,7 @@ public class PotentialCell extends JLabel implements Originator<PotentialCell.Se
 
         }
 
+        @Override
         public final void mouseEntered(final MouseEvent e) {
             if (!_isExcluded()) {
                 _setTouched(true);
@@ -167,6 +174,7 @@ public class PotentialCell extends JLabel implements Originator<PotentialCell.Se
 
         }
 
+        @Override
         public final void mouseExited(final MouseEvent e) {
             if (!_isExcluded()) {
                 _setTouched(false);
@@ -177,6 +185,7 @@ public class PotentialCell extends JLabel implements Originator<PotentialCell.Se
 
     private class HiliteListener implements Consumer<HiliteMessage> {
 
+        @Override
         public final void accept(final HiliteMessage message) {
             if (message.getSpec().equals(number)) {
                 _setHilited(message.getHilited());
@@ -187,10 +196,12 @@ public class PotentialCell extends JLabel implements Originator<PotentialCell.Se
 
     private class MESSAGE implements SelectMessage {
 
+        @Override
         public final Number getNumber() {
             return number;
         }
 
+        @Override
         public final PotentialCell getSender() {
             return PotentialCell.this;
         }
@@ -198,6 +209,7 @@ public class PotentialCell extends JLabel implements Originator<PotentialCell.Se
 
     private class PotentialListener implements Consumer<Potential.Message> {
 
+        @Override
         public final void accept(final Potential.Message message) {
             _setExcluded(!message.getSender().includes(number));
         }

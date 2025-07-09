@@ -31,10 +31,12 @@ public class Numbers {
             this.m_Identity = identity;
         }
 
+        @Override
         public final int getIdentity() {
             return m_Identity;
         }
 
+        @Override
         public final String getDisplay() {
             if (Numbers.getCount() < 10) {
                 return String.format("%d", m_Identity + 1);

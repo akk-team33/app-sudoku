@@ -56,6 +56,7 @@ public abstract class Potential extends Sender<Potential.Message> {
 
     protected class REPORT implements Message {
 
+        @Override
         public final Potential getSender() {
             return Potential.this;
         }

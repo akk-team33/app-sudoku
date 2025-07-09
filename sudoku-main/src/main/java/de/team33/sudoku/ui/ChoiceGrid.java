@@ -82,6 +82,7 @@ public class ChoiceGrid extends BasicInfoGrid {
 
         private class ADAPTER extends MouseAdapter {
 
+            @Override
             public final void mouseReleased(final MouseEvent e) {
                 if (e.getButton() == 1) {
                     m_Choice.setNumber((de.team33.sudoku.Number)null);
@@ -92,6 +93,7 @@ public class ChoiceGrid extends BasicInfoGrid {
 
         private class ChoiceListener implements Consumer<Choice.Message> {
 
+            @Override
             public final void accept(final Choice.Message message) {
                 final de.team33.sudoku.Number newNumber = message.getSender().getNumber();
                 final de.team33.sudoku.Number oldNumber = message.getOldNumber();
@@ -138,6 +140,7 @@ public class ChoiceGrid extends BasicInfoGrid {
 
         private class PotentialCellListener implements Consumer<PotentialCell.SelectMessage> {
 
+            @Override
             public final void accept(final PotentialCell.SelectMessage message) {
                 m_Choice.setNumber(message.getNumber());
             }

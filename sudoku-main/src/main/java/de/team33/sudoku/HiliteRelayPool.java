@@ -45,18 +45,21 @@ public class HiliteRelayPool {
             this.m_z = z;
         }
 
+        @Override
         public final void add(final Consumer<HiliteMessage> l) {
             getColRelay(m_x).add(l);
             getRowRelay(m_y).add(l);
             getAreaRelay(m_z).add(l);
         }
 
+        @Override
         public final void remove(final Consumer<HiliteMessage> l) {
             getColRelay(m_x).remove(l);
             getRowRelay(m_y).remove(l);
             getAreaRelay(m_z).remove(l);
         }
 
+        @Override
         public final void route(final HiliteMessage message) {
             getColRelay(m_x).route(message);
             getRowRelay(m_y).route(message);

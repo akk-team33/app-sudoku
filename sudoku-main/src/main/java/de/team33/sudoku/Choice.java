@@ -73,6 +73,7 @@ public class Choice extends Sender<Choice.Message> {
             }
         }
 
+        @Override
         public final boolean includes(final Number n) {
             return _isNullNumber() && super.includes(n) && colGrp.getPotential().includes(n) && rowGrp.getPotential().includes(n) && areaGrp.getPotential().includes(n);
         }
@@ -89,10 +90,12 @@ public class Choice extends Sender<Choice.Message> {
             this.oldNumber = oldNumber;
         }
 
+        @Override
         public final Number getOldNumber() {
             return oldNumber;
         }
 
+        @Override
         public final Choice getSender() {
             return Choice.this;
         }

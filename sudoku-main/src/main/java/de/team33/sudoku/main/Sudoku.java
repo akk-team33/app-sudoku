@@ -11,6 +11,7 @@ public class Sudoku implements Runnable {
         SwingUtilities.invokeLater(new Sudoku());
     }
 
+    @Override
     public final void run() {
         (new MainFrame(new Board())).setVisible(true);
     }

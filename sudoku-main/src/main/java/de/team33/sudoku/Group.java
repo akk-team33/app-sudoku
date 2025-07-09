@@ -49,6 +49,7 @@ public class Group {
             m_SubPotential.getRegister().add(m -> fire(new Potential.REPORT()));
         }
 
+        @Override
         public final boolean includes(final Number n) {
             return super.includes(n) && m_SubPotential.includes(n);
         }
@@ -59,6 +60,7 @@ public class Group {
 
         private class SUB_POT extends Potential implements Consumer<Choice.Message> {
 
+            @Override
             public final void accept(final Choice.Message message) {
                 final Number newNumber = message.getSender().getNumber();
                 if (message.getOldNumber() != newNumber) {

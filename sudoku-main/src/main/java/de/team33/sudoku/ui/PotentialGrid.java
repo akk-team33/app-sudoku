@@ -31,6 +31,7 @@ public class PotentialGrid extends JPanel {
 
     }
 
+    @Override
     public final void setVisible(final boolean aFlag) {
         for(int i = 0; i < m_Cells.length; ++i) {
             m_Cells[i].setVisible(aFlag);

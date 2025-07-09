@@ -3,6 +3,7 @@ package de.team33.messaging.simplex;
 public class Sender<MSG> implements Originator<MSG> {
     private final Router<MSG> router = new Router<>();
 
+    @Override
     public final Register<MSG> getRegister() {
         return router;
     }

@@ -3,16 +3,15 @@ package de.team33.sudoku.ui;
 import de.team33.sphinx.alpha.activity.Event;
 import de.team33.sphinx.alpha.visual.JButtons;
 import de.team33.sphinx.alpha.visual.JCheckBoxes;
-import de.team33.sphinx.alpha.visual.JLabels;
 import de.team33.sphinx.alpha.visual.JPanels;
-import de.team33.sudoku.Choice;
-import de.team33.sudoku.Number;
-import de.team33.sudoku.*;
+import de.team33.sudoku.Board;
+import de.team33.sudoku.HiliteRelayPool;
+import de.team33.sudoku.Hint;
+import de.team33.sudoku.Setup;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
-import java.util.function.Consumer;
 
 public class MainFrame extends JFrame {
 
@@ -145,73 +144,7 @@ public class MainFrame extends JFrame {
             super(new BorderLayout());
             setBorder(BorderFactory.createRaisedBevelBorder());
             add(actionGrid(req), BorderLayout.NORTH);
-            add(MainFrame.this.new INFO_GRID(req), BorderLayout.SOUTH);
+            add(InfoGrid.by(req.board), BorderLayout.SOUTH);
         }
-    }
-
-    private static class INFO_GRID extends JPanel implements Consumer<Choice.Message> {
-        private final JLabel[] m_Labels;
-        private int[] m_Values = new int[10];
-
-        public INFO_GRID(final Requisite req) {
-            super(new GridLayout(0, 2, 1, 1));
-            setBorder(BorderFactory.createEmptyBorder(1, 1, 1, 1));
-            this.m_Values = new int[Numbers.getCount() + 1];
-            this.m_Labels = new JLabel[Numbers.getCount() + 1];
-
-            int y;
-            for (y = 1; y < m_Labels.length; ++y) {
-                m_Labels[y] = infoLabel(0);
-                add(infoLabel(y));
-                add(m_Labels[y]);
-            }
-
-            m_Labels[0] = infoLabel(0);
-            add(infoLabel("Gesamt"));
-            add(m_Labels[0]);
-
-            for (y = 0; y < Numbers.getCount(); ++y) {
-                for (int x = 0; x < Numbers.getCount(); ++x) {
-                    req.board.getChoice(x, y).getRegister().add(this);
-                }
-            }
-        }
-
-        public final void accept(final Choice.Message message) {
-            final de.team33.sudoku.Number newNumber = message.getSender().getNumber();
-            final Number oldNumber = message.getOldNumber();
-            if (oldNumber != newNumber) {
-                int var10002;
-                final int i;
-                if (oldNumber == null) {
-                    i = newNumber.getIdentity() + 1;
-                    var10002 = m_Values[i]++;
-                    m_Labels[i].setText("" + m_Values[i]);
-                    var10002 = m_Values[0]++;
-                    m_Labels[0].setText("" + m_Values[0]);
-                } else if (newNumber == null) {
-                    i = oldNumber.getIdentity() + 1;
-                    var10002 = m_Values[i]--;
-                    m_Labels[i].setText("" + m_Values[i]);
-                    var10002 = m_Values[0]--;
-                    m_Labels[0].setText("" + m_Values[0]);
-                }
-            }
-
-        }
-    }
-
-    private static JLabel infoLabel(final int value) {
-        return infoLabel("" + value);
-    }
-
-    private static JLabel infoLabel(final String text) {
-        return JLabels.builder()
-                      .setText(text)
-                      .setHorizontalAlignment(SwingConstants.CENTER)
-                      .setVerticalAlignment(SwingConstants.CENTER)
-                      .setOpaque(true)
-                      .setBackground(Color.WHITE)
-                      .build();
     }
 }

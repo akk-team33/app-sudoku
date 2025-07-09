@@ -13,6 +13,7 @@ public class Router<M> implements Relay<M> {
         this.initial = initial;
     }
 
+    @Override
     public final void add(final Consumer<M> listener) {
         synchronized(registry) {
             if (registry.add(listener) && null != initial) {
@@ -21,12 +22,14 @@ public class Router<M> implements Relay<M> {
         }
     }
 
+    @Override
     public final void remove(final Consumer<M> lstnr) {
         synchronized(registry) {
             registry.remove(lstnr);
         }
     }
 
+    @Override
     public final void route(final M message) {
         final HashSet listeners;
         synchronized(registry) {
