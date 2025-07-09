@@ -13,6 +13,6 @@ public class Sudoku implements Runnable {
 
     @Override
     public final void run() {
-        (new MainFrame(new Board())).setVisible(true);
+        MainFrame.by(new Board()).setVisible(true);
     }
 }

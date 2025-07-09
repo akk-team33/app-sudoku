@@ -3,6 +3,7 @@ package de.team33.sudoku.ui;
 import de.team33.sphinx.alpha.activity.Event;
 import de.team33.sphinx.alpha.visual.JButtons;
 import de.team33.sphinx.alpha.visual.JCheckBoxes;
+import de.team33.sphinx.alpha.visual.JFrames;
 import de.team33.sphinx.alpha.visual.JPanels;
 import de.team33.sudoku.Board;
 import de.team33.sudoku.HiliteRelayPool;
@@ -17,24 +18,15 @@ public class MainFrame extends JFrame {
 
     private static final Insets INSETS_0000 = new Insets(0, 0, 0, 0);
 
-    private final Setup setup;
-    private final HiliteRelayPool hiliteRelayPool;
-    private final Board board;
-    private final ChoiceGrid choiceGrid;
-
-    public MainFrame(final Board board) {
-        super("Sudoku");
-
+    public static MainFrame by(final Board board) {
         final Requisite requisite = requisite(board);
-        this.setup = requisite.setup;
-        this.hiliteRelayPool = requisite.hiliteRelayPool;
-        this.board = requisite.board;
-        this.choiceGrid = requisite.choiceGrid;
-
-        setDefaultCloseOperation(DISPOSE_ON_CLOSE);
-        add(new CENTER_PANE(requisite), BorderLayout.CENTER);
-        add(new EAST_PANE(requisite), BorderLayout.EAST);
-        pack();
+        return JFrames.builder(MainFrame::new)
+                      .setTitle("Sudoku")
+                      .setDefaultCloseOperation(DISPOSE_ON_CLOSE)
+                      .add(centerPane(requisite), BorderLayout.CENTER)
+                      .add(eastPane(requisite), BorderLayout.EAST)
+                      .pack()
+                      .build();
     }
 
     private static Requisite requisite(final Board board) {
@@ -48,7 +40,7 @@ public class MainFrame extends JFrame {
     private static JButton cloneButton(final Requisite req) {
         return JButtons.builder()
                        .setText("Clone")
-                       .on(Event.ACTION_PERFORMED, e -> (new MainFrame(new Board(req.board))).setVisible(true))
+                       .on(Event.ACTION_PERFORMED, e -> (by(new Board(req.board))).setVisible(true))
                        .build();
     }
 
@@ -101,28 +93,19 @@ public class MainFrame extends JFrame {
         setup.setAutoHinting(checkBox.isSelected());
     }
 
-    private record Requisite(Setup setup, HiliteRelayPool hiliteRelayPool, Board board, ChoiceGrid choiceGrid) {
-
-        private Requisite withChoiceGrid() {
-            return new Requisite(setup, hiliteRelayPool, board, new ChoiceGrid(board, hiliteRelayPool, setup));
-        }
-    }
-
-    private static class CENTER_PANE extends JPanel {
-        private static final long serialVersionUID = -3672158492746235449L;
-
-        public CENTER_PANE(final Requisite req) {
-            super(new GridBagLayout());
-            add(new ColInfoGrid(req.board, req.hiliteRelayPool, req.setup), constraints(3, 1, 9, 1));
-            add(new RowInfoGrid(req.board, req.hiliteRelayPool, req.setup), constraints(1, 3, 1, 9));
-            add(new AreaInfoGrid(req.board, req.hiliteRelayPool, req.setup), constraints(13, 3, 3, 3));
-            add(new JPanel(), constraints(0, 0, 1, 1));
-            add(new JPanel(), constraints(2, 2, 1, 1));
-            add(new JPanel(), constraints(12, 2, 1, 1));
-            add(new JPanel(), constraints(16, 13, 1, 1));
-            add(req.choiceGrid, constraints(3, 3, 9, 9));
-            // add(new ChoiceGrid(req.board, req.hiliteRelayPool, req.setup), constraints(3, 3, 9, 9));
-        }
+    private static JPanel centerPane(final Requisite req) {
+        return JPanels.builder()
+                      .setLayout(new GridBagLayout())
+                      .add(new ColInfoGrid(req.board, req.hiliteRelayPool, req.setup), constraints(3, 1, 9, 1))
+                      .add(new RowInfoGrid(req.board, req.hiliteRelayPool, req.setup), constraints(1, 3, 1, 9))
+                      .add(new AreaInfoGrid(req.board, req.hiliteRelayPool, req.setup), constraints(13, 3, 3, 3))
+                      .add(new JPanel(), constraints(0, 0, 1, 1))
+                      .add(new JPanel(), constraints(2, 2, 1, 1))
+                      .add(new JPanel(), constraints(12, 2, 1, 1))
+                      .add(new JPanel(), constraints(16, 13, 1, 1))
+                      .add(req.choiceGrid, constraints(3, 3, 9, 9))
+                      // add(new ChoiceGrid(req.board, req.hiliteRelayPool, req.setup), constraints(3, 3, 9, 9))
+                      .build();
     }
 
     private static JPanel actionGrid(final Requisite req) {
@@ -137,14 +120,19 @@ public class MainFrame extends JFrame {
                       .build();
     }
 
-    private class EAST_PANE extends JPanel {
-        private static final long serialVersionUID = -1633863694402998797L;
+    private static JPanel eastPane(final Requisite req) {
+        return JPanels.builder()
+                      .setLayout(new BorderLayout())
+                      .setBorder(BorderFactory.createRaisedBevelBorder())
+                      .add(actionGrid(req), BorderLayout.NORTH)
+                      .add(InfoGrid.by(req.board), BorderLayout.SOUTH)
+                      .build();
+    }
 
-        public EAST_PANE(final Requisite req) {
-            super(new BorderLayout());
-            setBorder(BorderFactory.createRaisedBevelBorder());
-            add(actionGrid(req), BorderLayout.NORTH);
-            add(InfoGrid.by(req.board), BorderLayout.SOUTH);
+    private record Requisite(Setup setup, HiliteRelayPool hiliteRelayPool, Board board, ChoiceGrid choiceGrid) {
+
+        private Requisite withChoiceGrid() {
+            return new Requisite(setup, hiliteRelayPool, board, new ChoiceGrid(board, hiliteRelayPool, setup));
         }
     }
 }
