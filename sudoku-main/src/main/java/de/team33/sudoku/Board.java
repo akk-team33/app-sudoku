@@ -6,12 +6,13 @@ import java.util.List;
 
 public class Board {
 
+    private final int radix;
     private final int base;
     private final Choice[] m_Choice;
     private final GROUP[] m_Group;
 
     public Board() {
-        final int radix = Numbers.getRadix();
+        this.radix = Numbers.getRadix();
         this.base = Numbers.getCount();
         this.m_Group = new GROUP[3 * base];
 
@@ -40,6 +41,10 @@ public class Board {
         for(int i = 0; i < m_Choice.length; ++i) {
             m_Choice[i].setNumber(jig.m_Choice[i].getNumber());
         }
+    }
+
+    public final int radix() {
+        return radix;
     }
 
     public final int base() {
