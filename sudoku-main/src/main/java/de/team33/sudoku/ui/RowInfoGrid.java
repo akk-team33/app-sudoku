@@ -1,44 +1,46 @@
 package de.team33.sudoku.ui;
 
+import de.team33.sphinx.alpha.visual.JPanels;
 import de.team33.sudoku.Board;
 import de.team33.sudoku.HiliteRelayPool;
-import de.team33.sudoku.Numbers;
 import de.team33.sudoku.Setup;
 
-public class RowInfoGrid extends BasicInfoGrid {
-    private static final long serialVersionUID = -5679215683601638666L;
+import javax.swing.*;
+import java.util.function.Consumer;
+import java.util.stream.IntStream;
 
-    public RowInfoGrid(final Board s, final HiliteRelayPool frp, final Setup su) {
-        this(s, Numbers.getRadix(), frp, su);
+final class RowInfoGrid {
+
+    private RowInfoGrid() {
     }
 
-    private RowInfoGrid(final Board s, final int radix, final HiliteRelayPool frp, final Setup su) {
-        super(radix, 1);
-
-        for(int y = 0; y < radix; ++y) {
-            add(new AREA(s, y, radix, frp, su));
-        }
-
+    static JPanel panel(final Board board, final HiliteRelayPool pool, final Setup setup) {
+        return JPanels.builder(() -> new BasicInfoGrid(board.radix(), 1))
+                      .setup(addAreas(board, pool, setup, board.radix()))
+                      .build();
     }
 
-    private static class AREA extends BasicInfoGrid.Area {
-        private static final long serialVersionUID = 7246799809664980919L;
-
-        public AREA(final Board s, final int y0, final int radix, final HiliteRelayPool frp, final Setup su) {
-            super(radix, 1);
-
-            for(int dy = 0; dy < radix; ++dy) {
-                add(new CELL(s, radix * y0 + dy, frp, su));
-            }
-
-        }
+    private static Consumer<JPanel> addAreas(final Board board, final HiliteRelayPool pool, final Setup setup, final int radix) {
+        return panel -> {
+            IntStream.range(0, radix)
+                     .mapToObj(y -> area(board, y, radix, pool, setup))
+                     .forEach(panel::add);
+        };
     }
 
-    private static class CELL extends InfoCell {
-        private static final long serialVersionUID = 3240851759436494284L;
+    private static BasicInfoGrid.Area area(final Board board, final int y0, final int radix, final HiliteRelayPool pool, final Setup setup) {
+        return JPanels.builder(() -> new BasicInfoGrid.Area(radix, 1))
+                      .setup(addCells(board, y0, radix, pool, setup))
+                      .build();
+    }
 
-        public CELL(final Board s, final int y, final HiliteRelayPool frp, final Setup su) {
-            super(s.getRowGrp(y).getPotential(), frp.getRowRelay(y), su);
-        }
+    private static Consumer<BasicInfoGrid.Area> addCells(final Board board, final int y0, final int radix, final HiliteRelayPool pool, final Setup setup) {
+        return area -> IntStream.range(0, radix)
+                                .mapToObj(dy -> cell(board, pool, setup, radix * y0 + dy))
+                                .forEach(area::add);
+    }
+
+    private static InfoCell cell(final Board board, final HiliteRelayPool pool, final Setup setup, final int y) {
+        return new InfoCell(board.getRowGrp(y).getPotential(), pool.getRowRelay(y), setup);
     }
 }

@@ -97,7 +97,7 @@ public class MainFrame extends JFrame {
         return JPanels.builder()
                       .setLayout(new GridBagLayout())
                       .add(new ColInfoGrid(req.board, req.hiliteRelayPool, req.setup), constraints(3, 1, 9, 1))
-                      .add(new RowInfoGrid(req.board, req.hiliteRelayPool, req.setup), constraints(1, 3, 1, 9))
+                      .add(RowInfoGrid.panel(req.board, req.hiliteRelayPool, req.setup), constraints(1, 3, 1, 9))
                       .add(AreaInfoGrid.panel(req.board, req.hiliteRelayPool, req.setup), constraints(13, 3, 3, 3))
                       .add(new JPanel(), constraints(0, 0, 1, 1))
                       .add(new JPanel(), constraints(2, 2, 1, 1))

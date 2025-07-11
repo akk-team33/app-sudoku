@@ -20,9 +20,9 @@ final class AreaInfoGrid {
                       .build();
     }
 
-    private static BasicInfoGrid.Area area(final Board board, final int radix, final HiliteRelayPool hiliteRelayPool, final Setup setup) {
+    private static BasicInfoGrid.Area area(final Board board, final int radix, final HiliteRelayPool pool, final Setup setup) {
         return JPanels.builder(() -> new BasicInfoGrid.Area(radix, radix))
-                      .setup(addCells(board, hiliteRelayPool, setup, radix * radix))
+                      .setup(addCells(board, pool, setup, radix * radix))
                       .build();
     }
 
